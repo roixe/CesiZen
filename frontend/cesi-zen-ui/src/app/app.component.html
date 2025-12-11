@@ -1,0 +1,17 @@
+<div class="app-container">
+  <h1>{{ title }}</h1>
+
+  <div *ngIf="healthStatus; else errorTpl" class="card">
+    <h2>Backend connecté</h2>
+    <p><strong>Status :</strong> {{ healthStatus.status }}</p>
+    <p><strong>Backend :</strong> {{ healthStatus.backend }}</p>
+    <p><strong>Heure (UTC) :</strong> {{ healthStatus.timestamp }}</p>
+  </div>
+
+  <ng-template #errorTpl>
+    <div class="card error">
+      <h2>Backend non disponible</h2>
+      <p>{{ errorMessage }}</p>
+    </div>
+  </ng-template>
+</div>
