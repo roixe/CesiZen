@@ -1,0 +1,19 @@
+<h2>Respiration</h2>
+
+<div *ngIf="loading()">Chargement…</div>
+<div *ngIf="message()">{{ message() }}</div>
+
+<ul *ngIf="!loading()">
+  <li *ngFor="let ex of exercices()">
+    <strong>{{ ex.nom }}</strong>
+    <div>{{ ex.description }}</div>
+    <div>
+      Inspire: {{ ex.inspireSec }}s —
+      Apnée: {{ ex.apneeSec }}s —
+      Expire: {{ ex.expireSec }}s —
+      Apnée2: {{ ex.apnee2Sec }}s —
+      Cycles: {{ ex.cycles }}
+    </div>
+    <button (click)="startAndSave(ex)">Démarrer (MVP) + Enregistrer</button>
+  </li>
+</ul>
