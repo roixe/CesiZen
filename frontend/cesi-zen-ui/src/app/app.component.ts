@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { HealthService, HealthStatus } from './services/health.service';
+import { timer } from 'rxjs';
+import { retry, finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -16,17 +18,28 @@ export class AppComponent implements OnInit {
   healthStatus?: HealthStatus;
   errorMessage?: string;
 
+  loading = true;
+
   constructor(private healthService: HealthService) { }
 
-  ngOnInit(): void {
-    this.healthService.getHealth().subscribe({
-      next: (status: HealthStatus) => {
-        this.healthStatus = status;
-      },
-      error: (error: any) => {
-        console.error(error);
-        this.errorMessage = 'Impossible de contacter le backend.';
-      }
-    });
-  }
+checkBackend(): void {
+  this.loading = true;
+  this.healthStatus = undefined;
+  this.errorMessage = undefined;
+
+  this.healthService.getHealth().subscribe({
+    next: (status: HealthStatus) => {
+      this.healthStatus = status;
+      this.loading = false;
+    },
+    error: (error: any) => {
+      this.errorMessage = `Backend indisponible (status=${error?.status ?? 'n/a'})`;
+      this.loading = false;
+    }
+  });
+}
+
+ngOnInit(): void {
+  this.checkBackend();
+}
 }

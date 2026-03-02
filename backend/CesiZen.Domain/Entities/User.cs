@@ -9,18 +9,16 @@ namespace CesiZen.Domain.Entities
     public class User
     {
         public int Id { get; set; }
-
+        public string Nom { get; set; } = null!;
         public string Email { get; set; } = null!;
+        public string MotDePasseHash { get; set; } = null!;
+        public DateTime DateCreation { get; set; } = DateTime.UtcNow;
+        public string Role { get; set; } = "USER";
+        public bool Actif { get; set; } = true;
 
-        public string PasswordHash { get; set; } = null!;
-
-        public string? FirstName { get; set; }
-
-        public string? LastName { get; set; }
-
-        public bool IsActive { get; set; } = true;
-
-        public string Role { get; set; } = "User";
+        public ICollection<Article> ArticlesGeres { get; set; } = new List<Article>();
+        public ICollection<Historique> Historiques { get; set; } = new List<Historique>();
+        public ICollection<Maintient> CategoriesMaintenues { get; set; } = new List<Maintient>();
 
     }
 }
