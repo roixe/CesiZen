@@ -15,10 +15,14 @@ export interface HealthStatus {
 export class HealthService {
 
   private readonly baseUrl = environment.apiBaseUrl;
+  
 
   constructor(private http: HttpClient) { }
 
   getHealth(): Observable<HealthStatus> {
+    console.log('ENV TAG:', environment.debugTag);
+
     return this.http.get<HealthStatus>(`${this.baseUrl}/health`);
+    
   }
 }

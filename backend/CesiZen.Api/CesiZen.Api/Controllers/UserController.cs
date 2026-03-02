@@ -7,11 +7,11 @@ namespace CesiZen.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UsersController : ControllerBase
+    public class UserController : ControllerBase
     {
         private readonly CesiZenDbContext _context;
 
-        public UsersController(CesiZenDbContext context)
+        public UserController(CesiZenDbContext context)
         {
             _context = context;
         }
@@ -19,7 +19,7 @@ namespace CesiZen.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            var users = await _context.Users.ToListAsync();
+            var users = await _context.Utilisateurs.ToListAsync();
             return Ok(users);
         }
     }

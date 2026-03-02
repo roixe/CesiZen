@@ -4,6 +4,7 @@ using CesiZen.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CesiZen.Infrastructure.Migrations
 {
     [DbContext(typeof(CesiZenDbContext))]
-    partial class CesiZenDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260212102324_sECCreate")]
+    partial class sECCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -58,18 +61,6 @@ namespace CesiZen.Infrastructure.Migrations
                     b.HasIndex("GereParUserId");
 
                     b.ToTable("article", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CategorieId = 2,
-                            Contenu = "La respiration lente et régulière stimule le système parasympathique et favorise le retour au calme.",
-                            DatePublication = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            GereParUserId = 1,
-                            Public = true,
-                            Titre = "Pourquoi la respiration aide à calmer le stress"
-                        });
                 });
 
             modelBuilder.Entity("CesiZen.Domain.Entities.Categorie", b =>
@@ -91,18 +82,6 @@ namespace CesiZen.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("categorie", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Nom = "Respiration"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Nom = "Gestion du stress"
-                        });
                 });
 
             modelBuilder.Entity("CesiZen.Domain.Entities.Enregistre", b =>
@@ -179,50 +158,6 @@ namespace CesiZen.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("exercice", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Apnee2Sec = 0,
-                            ApneeSec = 0,
-                            Cycles = 30,
-                            Description = "Inspire 5s, expire 5s. Environ 5 minutes.",
-                            DureeTotaleSec = 300,
-                            ExpireSec = 5,
-                            InspireSec = 5,
-                            Nom = "Cohérence cardiaque 5-5",
-                            Public = true,
-                            Type = "RESPIRATION"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Apnee2Sec = 0,
-                            ApneeSec = 7,
-                            Cycles = 6,
-                            Description = "Inspire 4s, apnée 7s, expire 8s.",
-                            DureeTotaleSec = 114,
-                            ExpireSec = 8,
-                            InspireSec = 4,
-                            Nom = "4-7-8",
-                            Public = true,
-                            Type = "RESPIRATION"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Apnee2Sec = 4,
-                            ApneeSec = 4,
-                            Cycles = 8,
-                            Description = "Inspire 4s, apnée 4s, expire 4s, apnée 4s.",
-                            DureeTotaleSec = 128,
-                            ExpireSec = 4,
-                            InspireSec = 4,
-                            Nom = "Box breathing 4-4-4-4",
-                            Public = true,
-                            Type = "RESPIRATION"
-                        });
                 });
 
             modelBuilder.Entity("CesiZen.Domain.Entities.Historique", b =>
@@ -304,18 +239,6 @@ namespace CesiZen.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("utilisateur", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Actif = true,
-                            DateCreation = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "admin@cesizen.local",
-                            MotDePasseHash = "Admin",
-                            Nom = "Admin",
-                            Role = "ADMIN"
-                        });
                 });
 
             modelBuilder.Entity("CesiZen.Domain.Entities.Article", b =>
