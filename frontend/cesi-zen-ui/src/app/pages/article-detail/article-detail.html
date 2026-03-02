@@ -1,0 +1,10 @@
+<a [routerLink]="['/info']">← Retour</a>
+
+<div *ngIf="loading()">Chargement…</div>
+<div *ngIf="message()">{{ message() }}</div>
+
+<div *ngIf="!loading() && article()">
+  <h2>{{ article()!.titre }}</h2>
+  <div *ngIf="article()!.datePublication">Publié : {{ article()!.datePublication }}</div>
+  <p style="white-space: pre-wrap;">{{ article()!.contenu }}</p>
+</div>

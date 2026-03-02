@@ -1,10 +1,10 @@
 <h2>Respiration</h2>
 
-<div *ngIf="loading">Chargement…</div>
-<div *ngIf="message">{{ message }}</div>
+<div *ngIf="loading()">Chargement…</div>
+<div *ngIf="message()">{{ message() }}</div>
 
-<ul>
-  <li *ngFor="let ex of exercices">
+<ul *ngIf="!loading()">
+  <li *ngFor="let ex of exercices()">
     <strong>{{ ex.nom }}</strong>
     <div>{{ ex.description }}</div>
     <div>

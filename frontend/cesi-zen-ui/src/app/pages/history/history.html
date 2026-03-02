@@ -1,12 +1,10 @@
 <h2>Historique</h2>
-<div *ngIf="loading">Chargement…</div>
-<div *ngIf="message">{{ message }}</div>
 
-<div *ngFor="let h of historiques" style="margin-bottom: 1rem;">
-  <div><strong>#{{ h.id }}</strong> — {{ h.date }} — durée: {{ h.dureeSec }}s</div>
-  <ul>
-    <li *ngFor="let e of h.exercicesEnregistres">
-      {{ e.exercice?.nom }} ({{ e.dureeEffectiveSec }}s)
-    </li>
-  </ul>
+<div *ngIf="loading()">Chargement…</div>
+<div *ngIf="message()">{{ message() }}</div>
+
+<div *ngIf="!loading()">
+  <div *ngFor="let h of historiques()" style="margin-bottom: 1rem;">
+    <div><strong>#{{ h.id }}</strong> — {{ h.date }} — durée: {{ h.dureeSec }}s</div>
+  </div>
 </div>

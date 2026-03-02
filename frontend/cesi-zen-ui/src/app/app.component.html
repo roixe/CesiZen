@@ -1,6 +1,12 @@
-<nav>
-  <a routerLink="/breathing">Respiration</a> |
-  <a routerLink="/history">Historique</a>
-</nav>
+<div class="app-container">
+  <h1> CesiZen </h1>
 
-<router-outlet></router-outlet>
+  <nav>
+    <a [routerLink]="['/breathing']">Respiration</a> |
+    <a [routerLink]="['/history']">Historique</a>
+    <a [routerLink]="['/info']">Informations</a>
+
+  </nav>
+
+  <router-outlet></router-outlet>
+</div>

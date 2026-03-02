@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HistoriquesService } from '../../services/historiques.service';
 import { Historique } from '../../models/historique';
+import { finalize, timeout, catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-history',
@@ -11,16 +13,31 @@ import { Historique } from '../../models/historique';
 })
 export class HistoryComponent implements OnInit {
   userId = 1;
-  historiques: Historique[] = [];
-  loading = true;
-  message?: string;
+
+  historiques = signal<Historique[]>([]);
+  loading = signal(false);
+  message = signal<string | undefined>(undefined);
 
   constructor(private historiquesService: HistoriquesService) {}
 
   ngOnInit(): void {
-    this.historiquesService.getHistoriqueByUser(this.userId).subscribe({
-      next: (data) => { this.historiques = data; this.loading = false; },
-      error: () => { this.loading = false; }
+    this.load();
+  }
+
+  load(): void {
+    this.loading.set(true);
+    this.message.set(undefined);
+
+    this.historiquesService.getHistoriqueByUser(this.userId).pipe(
+      timeout(5000),
+      catchError(err => {
+        console.error('Historiques error:', err);
+        this.message.set(`Erreur historiques (status=${err?.status ?? 'n/a'})`);
+        return of([] as Historique[]);
+      }),
+      finalize(() => this.loading.set(false))
+    ).subscribe(data => {
+      this.historiques.set(data);
     });
   }
 }

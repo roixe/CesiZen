@@ -1,1 +1,20 @@
-<p>info works!</p>
+<h2>Informations</h2>
+
+<div *ngIf="loading()">Chargement…</div>
+<div *ngIf="message()">{{ message() }}</div>
+
+<div *ngIf="!loading()">
+  <div *ngIf="articles().length === 0">
+    Aucun article disponible.
+  </div>
+
+  <ul>
+    <li *ngFor="let a of articles()">
+      <a [routerLink]="['/info', a.id]">
+        <strong>{{ a.titre }}</strong>
+      </a>
+      <div>Catégorie : {{ categoryName(a.categorieId) }}</div>
+      <div *ngIf="a.datePublication">Publié : {{ a.datePublication }}</div>
+    </li>
+  </ul>
+</div>
