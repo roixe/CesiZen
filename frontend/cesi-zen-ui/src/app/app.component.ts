@@ -2,13 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { HealthService, HealthStatus } from './services/health.service';
-import { timer } from 'rxjs';
-import { retry, finalize } from 'rxjs/operators';
-
+import { RouterOutlet, RouterLink } from '@angular/router';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, HttpClientModule],
+  imports: [CommonModule, HttpClientModule, RouterOutlet, RouterLink],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })

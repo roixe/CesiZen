@@ -1,24 +1,6 @@
-<div class="app-container">
-  <h1>{{ title }}</h1>
-<button (click)="checkBackend()">Re-tester</button>
+<nav>
+  <a routerLink="/breathing">Respiration</a> |
+  <a routerLink="/history">Historique</a>
+</nav>
 
-  <div *ngIf="loading" class="card">
-    <h2>Connexion au backend…</h2>
-  </div>
-
-  <div *ngIf="!loading">
-    <div *ngIf="healthStatus; else errorTpl" class="card">
-      <h2>Backend connecté</h2>
-      <p><strong>Status :</strong> {{ healthStatus.status }}</p>
-      <p><strong>Backend :</strong> {{ healthStatus.backend }}</p>
-      <p><strong>Heure (UTC) :</strong> {{ healthStatus.timestamp }}</p>
-    </div>
-
-    <ng-template #errorTpl>
-      <div class="card error">
-        <h2>Backend non disponible</h2>
-        <p>{{ errorMessage }}</p>
-      </div>
-    </ng-template>
-  </div>
-</div>
+<router-outlet></router-outlet>
