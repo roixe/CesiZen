@@ -1,9 +1,12 @@
 <h1>{{ title }}</h1>
 
 <nav>
-  <a [routerLink]="['/breathing']">Respiration</a> |
   <a [routerLink]="['/info']">Infos</a> |
+  <a [routerLink]="['/breathing']">Respiration</a> |
   <a [routerLink]="['/history']">Historique</a> |
+  <a *ngIf="isAdmin()" [routerLink]="['/admin/users']">Admin</a> |
+  <a *ngIf="isAdmin()" [routerLink]="['/admin/articles']">Gestion Articles</a> |
+  <a *ngIf="isAdmin()" [routerLink]="['/admin/categories']">Gestion Catégories</a> |
   <a *ngIf="!isLoggedIn()" [routerLink]="['/login']">Login</a>
   <button *ngIf="isLoggedIn()" (click)="logout()">Logout</button>
 </nav>

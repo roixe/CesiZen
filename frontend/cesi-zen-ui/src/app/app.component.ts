@@ -14,6 +14,7 @@ export class AppComponent {
   title = 'CesiZen';
 
   isLoggedIn = computed(() => this.auth.isLoggedIn());
+  isAdmin = computed(() => this.auth.isAdmin());
 
   constructor(private auth: AuthService) {}
 

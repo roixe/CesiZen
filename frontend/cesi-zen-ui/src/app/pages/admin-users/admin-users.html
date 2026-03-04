@@ -1,0 +1,25 @@
+<h2>Admin - Utilisateurs</h2>
+
+<div *ngIf="loading()">Chargement…</div>
+<div *ngIf="message()">{{ message() }}</div>
+
+<table *ngIf="!loading()">
+  <thead>
+    <tr>
+      <th>ID</th><th>Nom</th><th>Email</th><th>Role</th><th>Actif</th><th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let u of users()">
+      <td>{{ u.id }}</td>
+      <td>{{ u.nom }}</td>
+      <td>{{ u.email }}</td>
+      <td>{{ u.role }}</td>
+      <td>{{ u.actif }}</td>
+      <td>
+        <button (click)="toggleActive(u)">{{ u.actif ? 'Désactiver' : 'Activer' }}</button>
+        <button (click)="toggleRole(u)">Toggle Role</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

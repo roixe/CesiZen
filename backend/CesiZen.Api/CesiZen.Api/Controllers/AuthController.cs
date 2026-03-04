@@ -80,6 +80,8 @@ public class AuthController : ControllerBase
 
     private string GenerateJwt(User user)
     {
+        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString());
+        new Claim(ClaimTypes.Role, user.Role);
         var issuer = _config["Jwt:Issuer"];
         var audience = _config["Jwt:Audience"];
         var key = _config["Jwt:Key"];
