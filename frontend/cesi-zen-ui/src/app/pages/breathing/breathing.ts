@@ -17,7 +17,6 @@ export class BreathingComponent implements OnInit {
   loading = signal<boolean>(false);
   message = signal<string | undefined>(undefined);
 
-  userId = 1;
 
   constructor(
     private exercicesService: ExercicesService,
@@ -43,7 +42,6 @@ export class BreathingComponent implements OnInit {
         this.loading.set(false);
       })
     ).subscribe(data => {
-      // On met à jour le signal, ce qui déclenche le rendu immédiat
       this.exercices.set(data);
     });
   }
@@ -52,7 +50,6 @@ export class BreathingComponent implements OnInit {
     this.message.set('Enregistrement en cours...');
     
     this.historiquesService.createHistorique({
-      utilisateurId: this.userId,
       exerciceId: ex.id,
       dureeEffectiveSec: ex.dureeTotaleSec
     }).pipe(

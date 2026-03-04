@@ -1,12 +1,11 @@
-<div class="app-container">
-  <h1> CesiZen </h1>
+<h1>{{ title }}</h1>
 
-  <nav>
-    <a [routerLink]="['/breathing']">Respiration</a> |
-    <a [routerLink]="['/history']">Historique</a>
-    <a [routerLink]="['/info']">Informations</a>
+<nav>
+  <a [routerLink]="['/breathing']">Respiration</a> |
+  <a [routerLink]="['/info']">Infos</a> |
+  <a [routerLink]="['/history']">Historique</a> |
+  <a *ngIf="!isLoggedIn()" [routerLink]="['/login']">Login</a>
+  <button *ngIf="isLoggedIn()" (click)="logout()">Logout</button>
+</nav>
 
-  </nav>
-
-  <router-outlet></router-outlet>
-</div>
+<router-outlet></router-outlet>

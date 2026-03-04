@@ -3,8 +3,6 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { InfosService } from '../../services/infos.service';
 import { Article } from '../../models/article';
-import { catchError, finalize, timeout } from 'rxjs/operators';
-import { of } from 'rxjs';
 
 @Component({
   selector: 'app-article-detail',
@@ -13,33 +11,23 @@ import { of } from 'rxjs';
   templateUrl: './article-detail.html'
 })
 export class ArticleDetailComponent implements OnInit {
+  article = signal<Article | null>(null);
   loading = signal(false);
   message = signal<string | undefined>(undefined);
-  article = signal<Article | null>(null);
 
-  constructor(private route: ActivatedRoute, private infosService: InfosService) {}
+  constructor(private route: ActivatedRoute, private infos: InfosService) {}
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    if (!id || Number.isNaN(id)) {
-      this.message.set('Identifiant article invalide.');
+    if (!id) {
+      this.message.set('Article introuvable.');
       return;
     }
-    this.load(id);
-  }
 
-  load(id: number): void {
     this.loading.set(true);
-    this.message.set(undefined);
-
-    this.infosService.getArticleById(id).pipe(
-      timeout(5000),
-      catchError(err => {
-        console.error('Article detail error', err);
-        this.message.set(`Article introuvable (status=${err?.status ?? 'n/a'})`);
-        return of(null);
-      }),
-      finalize(() => this.loading.set(false))
-    ).subscribe(a => this.article.set(a));
+    this.infos.getArticleById(id).subscribe({
+      next: (a) => { this.article.set(a); this.loading.set(false); },
+      error: (err) => { this.loading.set(false); this.message.set(`Erreur (status=${err?.status ?? 'n/a'})`); }
+    });
   }
 }

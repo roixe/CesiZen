@@ -28,7 +28,7 @@ export class HistoryComponent implements OnInit {
     this.loading.set(true);
     this.message.set(undefined);
 
-    this.historiquesService.getHistoriqueByUser(this.userId).pipe(
+    this.historiquesService.getMyHistorique().pipe(
       timeout(5000),
       catchError(err => {
         console.error('Historiques error:', err);
@@ -36,8 +36,8 @@ export class HistoryComponent implements OnInit {
         return of([] as Historique[]);
       }),
       finalize(() => this.loading.set(false))
-    ).subscribe(data => {
-      this.historiques.set(data);
-    });
+      ).subscribe((data: Historique[]) => {
+       this.historiques.set(data);
+      });
   }
 }

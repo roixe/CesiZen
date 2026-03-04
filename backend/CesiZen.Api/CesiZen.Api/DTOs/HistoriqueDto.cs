@@ -15,3 +15,8 @@ public record HistoriqueDto(
     int DureeSec,
     List<EnregistreDto> Exercices
 );
+
+public record CreateHistoriqueDto(
+    int ExerciceId,
+    int DureeEffectiveSec
+);
