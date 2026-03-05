@@ -1,19 +1,74 @@
-<h2>Respiration</h2>
+<section class="card breathing">
+  <header>
+    <h2 class="card__title">Respiration</h2>
+    <p class="card__sub">
+      Sélectionne un exercice (7-4-8, 5-5, 4-6), démarre, puis suis la trame.
+    </p>
+  </header>
 
-<div *ngIf="loading()">Chargement…</div>
-<div *ngIf="message()">{{ message() }}</div>
+  <!-- Message -->
+  <div *ngIf="message()" class="alert"
+       [class.alert--error]="(message() ?? '').toLowerCase().includes('erreur')">
+    {{ message() }}
+  </div>
 
-<ul *ngIf="!loading()">
-  <li *ngFor="let ex of exercices()">
-    <strong>{{ ex.nom }}</strong>
-    <div>{{ ex.description }}</div>
-    <div>
-      Inspire: {{ ex.inspireSec }}s —
-      Apnée: {{ ex.apneeSec }}s —
-      Expire: {{ ex.expireSec }}s —
-      Apnée2: {{ ex.apnee2Sec }}s —
-      Cycles: {{ ex.cycles }}
+  <!-- Ring -->
+  <div class="breathing__ring-wrap">
+    <div class="ring"
+         [class.ring--in]="phase() === 'IN'"
+         [class.ring--hold]="phase() === 'HOLD'"
+         [class.ring--out]="phase() === 'OUT'">
+      <div class="ring__center">
+        <div class="ring__phase">{{ phaseLabel() }}</div>
+        <div class="ring__countdown">{{ remaining() }}s</div>
+      </div>
     </div>
-    <button (click)="startAndSave(ex)">Démarrer (MVP) + Enregistrer</button>
-  </li>
-</ul>
+  </div>
+
+  <!-- Controls -->
+  <div class="breathing__controls">
+    <button class="btn btn--primary"
+            (click)="toggle()"
+            [disabled]="!selected()">
+      {{ running() ? 'Pause' : 'Démarrer' }}
+    </button>
+
+    <button class="btn btn--ghost" (click)="reset()">
+      Réinitialiser
+    </button>
+
+    <button class="btn btn--success"
+            (click)="saveManual()"
+            [disabled]="saving() || !selected()">
+      {{ saving() ? 'Enregistrement…' : 'Enregistrer' }}
+    </button>
+  </div>
+
+  <!-- Presets -->
+  <div class="breathing__presets">
+    <button class="preset"
+            (click)="selectPreset('748')"
+            [class.preset--active]="selected()?.code === '748'">
+      <div class="preset__title">7-4-8</div>
+      <div class="preset__desc">Relaxation • Inspire 7s • Apnée 4s • Expire 8s</div>
+    </button>
+
+    <button class="preset"
+            (click)="selectPreset('55')"
+            [class.preset--active]="selected()?.code === '55'">
+      <div class="preset__title">5-5</div>
+      <div class="preset__desc">Cohérence • Inspire 5s • Expire 5s</div>
+    </button>
+
+    <button class="preset"
+            (click)="selectPreset('46')"
+            [class.preset--active]="selected()?.code === '46'">
+      <div class="preset__title">4-6</div>
+      <div class="preset__desc">Apaisement • Inspire 4s • Expire 6s</div>
+    </button>
+  </div>
+
+  <div class="helper breathing__helper">
+    Astuce : inspire doucement par le nez, expire plus longuement et relâche les épaules.
+  </div>
+</section>

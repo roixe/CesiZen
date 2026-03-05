@@ -1,10 +1,18 @@
-import { Component, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ExercicesService } from '../../services/exercices.service';
 import { HistoriquesService } from '../../services/historiques.service';
-import { Exercice } from '../../models/exercice';
-import { finalize, timeout, catchError } from 'rxjs/operators';
+import { timeout, catchError, finalize } from 'rxjs/operators';
 import { of } from 'rxjs';
+
+type Phase = 'IDLE' | 'IN' | 'HOLD' | 'OUT';
+
+interface BreathingPreset {
+  code: string;
+  label: string;
+  inspire: number;
+  hold: number;
+  expire: number;
+}
 
 @Component({
   selector: 'app-breathing',
@@ -12,57 +20,164 @@ import { of } from 'rxjs';
   imports: [CommonModule],
   templateUrl: './breathing.html'
 })
-export class BreathingComponent implements OnInit {
-  exercices = signal<Exercice[]>([]);
-  loading = signal<boolean>(false);
+export class BreathingComponent implements OnDestroy {
+
+  /* ---------------- presets CDC ---------------- */
+
+  presets: BreathingPreset[] = [
+    { code: '748', label: '7-4-8', inspire: 7, hold: 4, expire: 8 },
+    { code: '55', label: '5-5', inspire: 5, hold: 0, expire: 5 },
+    { code: '46', label: '4-6', inspire: 4, hold: 0, expire: 6 }
+  ];
+
+  selected = signal<BreathingPreset | null>(null);
+
+  /* ---------------- player state ---------------- */
+
+  phase = signal<Phase>('IDLE');
+  remaining = signal<number>(0);
+  running = signal(false);
+
   message = signal<string | undefined>(undefined);
+  saving = signal(false);
 
+  private timer: any = null;
 
-  constructor(
-    private exercicesService: ExercicesService,
-    private historiquesService: HistoriquesService
-  ) {}
+  constructor(private historiquesService: HistoriquesService) {}
 
-  ngOnInit(): void {
-    this.load();
+  ngOnDestroy(): void {
+    this.clearTimer();
   }
 
-  load(): void {
-    this.loading.set(true);
-    this.message.set(undefined);
+  /* ---------------- UI helpers ---------------- */
 
-    this.exercicesService.getRespirationExercices().pipe(
-      timeout(5000),
-      catchError(err => {
-        console.error('Exercices error:', err);
-        this.message.set(`Erreur chargement exercices (status=${err?.status ?? 'n/a'})`);
-        return of([] as Exercice[]);
-      }),
-      finalize(() => {
-        this.loading.set(false);
-      })
-    ).subscribe(data => {
-      this.exercices.set(data);
-    });
+  phaseLabel(): string {
+    const p = this.phase();
+    if (p === 'IN') return 'Inspire';
+    if (p === 'HOLD') return 'Apnée';
+    if (p === 'OUT') return 'Expire';
+    return 'Prêt';
   }
 
-  startAndSave(ex: Exercice): void {
-    this.message.set('Enregistrement en cours...');
-    
+  /* ---------------- preset selection ---------------- */
+
+  selectPreset(code: string): void {
+    const p = this.presets.find(x => x.code === code) ?? null;
+    this.selected.set(p);
+    this.reset();
+  }
+
+  /* ---------------- player controls ---------------- */
+
+  toggle(): void {
+    if (!this.selected()) {
+      this.message.set("Sélectionne un exercice.");
+      return;
+    }
+
+    if (this.running()) {
+      this.pause();
+    } else {
+      this.start();
+    }
+  }
+
+  start(): void {
+    const preset = this.selected();
+    if (!preset) return;
+
+    this.running.set(true);
+    this.phase.set('IN');
+    this.remaining.set(preset.inspire);
+
+    this.timer = setInterval(() => this.tick(), 1000);
+  }
+
+  pause(): void {
+    this.running.set(false);
+    this.clearTimer();
+  }
+
+  reset(): void {
+    this.pause();
+    this.phase.set('IDLE');
+    this.remaining.set(0);
+  }
+
+  private tick(): void {
+    const preset = this.selected();
+    if (!preset) return;
+
+    const r = this.remaining();
+
+    if (r > 1) {
+      this.remaining.set(r - 1);
+      return;
+    }
+
+    const phase = this.phase();
+
+    if (phase === 'IN') {
+      if (preset.hold > 0) {
+        this.phase.set('HOLD');
+        this.remaining.set(preset.hold);
+      } else {
+        this.phase.set('OUT');
+        this.remaining.set(preset.expire);
+      }
+      return;
+    }
+
+    if (phase === 'HOLD') {
+      this.phase.set('OUT');
+      this.remaining.set(preset.expire);
+      return;
+    }
+
+    if (phase === 'OUT') {
+      this.phase.set('IN');
+      this.remaining.set(preset.inspire);
+      return;
+    }
+  }
+
+  private clearTimer(): void {
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
+    }
+  }
+
+  /* ---------------- save manually ---------------- */
+
+  saveManual(): void {
+
+    const preset = this.selected();
+
+    if (!preset) {
+      this.message.set("Choisis un exercice avant d'enregistrer.");
+      return;
+    }
+
+    this.saving.set(true);
+    this.message.set("Enregistrement...");
+
+    /* durée approximative */
+    const duration = preset.inspire + preset.hold + preset.expire;
+
     this.historiquesService.createHistorique({
-      exerciceId: ex.id,
-      dureeEffectiveSec: ex.dureeTotaleSec
+      exerciceId: 1, // MVP : un id générique respiration
+      dureeEffectiveSec: duration
     }).pipe(
       timeout(5000),
       catchError(err => {
-        console.error('Create historique error:', err);
-        this.message.set(`Erreur enregistrement (status=${err?.status ?? 'n/a'})`);
+        console.error(err);
+        this.message.set("Erreur lors de l'enregistrement");
         return of(null);
-      })
+      }),
+      finalize(() => this.saving.set(false))
     ).subscribe(res => {
-      if (res) {
-        this.message.set(`Session enregistrée (historique id=${res.id})`);
-      }
+      if (res) this.message.set("Session enregistrée ✔");
     });
   }
 }

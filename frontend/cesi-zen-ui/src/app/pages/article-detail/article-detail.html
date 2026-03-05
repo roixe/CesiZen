@@ -1,3 +1,5 @@
+<section class="card">
+
 <a [routerLink]="['/info']">← Retour</a>
 
 <div *ngIf="loading()">Chargement…</div>
@@ -8,3 +10,4 @@
   <div *ngIf="article()!.datePublication">Publié : {{ article()!.datePublication }}</div>
   <p style="white-space: pre-wrap;">{{ article()!.contenu }}</p>
 </div>
+</section>
