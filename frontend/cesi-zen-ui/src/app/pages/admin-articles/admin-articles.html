@@ -1,0 +1,72 @@
+<section class="card">
+
+<h2>Admin — Articles</h2>
+
+<div *ngIf="message()">{{ message() }}</div>
+<div *ngIf="loading()">Chargement…</div>
+
+<section style="margin: 1rem 0; padding: 1rem; border: 1px solid #ddd;">
+  <h3>{{ editId() ? ('Modifier #' + editId()) : 'Créer un article' }}</h3>
+
+  <div style="display: grid; gap: .5rem; max-width: 700px;">
+    <label>
+      Titre
+      <input [(ngModel)]="titre" name="titre" />
+    </label>
+
+    <label>
+      Contenu
+      <textarea [(ngModel)]="contenu" name="contenu" rows="6"></textarea>
+    </label>
+
+<label>
+  Catégorie
+  <select
+    [value]="categorieId()"
+    (change)="categorieId.set(+($any($event.target)).value)"  >
+    <option *ngFor="let c of categories()" [value]="c.id">
+      {{ c.nom }}
+    </option>
+  </select>
+</label>
+
+    <label>
+      <input [(ngModel)]="isPublic" name="isPublic" type="checkbox" />
+      Public (publié)
+    </label>
+
+    <div style="display: flex; gap: .5rem;">
+      <button (click)="save()" [disabled]="loading()">
+        {{ editId() ? 'Enregistrer' : 'Créer' }}
+      </button>
+      <button (click)="startCreate()" [disabled]="loading()">Nouveau</button>
+    </div>
+  </div>
+</section>
+
+<table *ngIf="!loading()" style="width: 100%; border-collapse: collapse;">
+  <thead>
+    <tr>
+      <th style="text-align:left;">ID</th>
+      <th style="text-align:left;">Titre</th>
+      <th style="text-align:left;">Cat.</th>
+      <th style="text-align:left;">Public</th>
+      <th style="text-align:left;">Date</th>
+      <th style="text-align:left;">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let a of articles()">
+      <td>{{ a.id }}</td>
+      <td>{{ a.titre }}</td>
+      <td>{{ a.categorieId }}</td>
+      <td>{{ a.public }}</td>
+      <td>{{ a.datePublication ?? '-' }}</td>
+      <td>
+        <button (click)="startEdit(a)">Edit</button>
+        <button (click)="delete(a.id)">Delete</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</section>

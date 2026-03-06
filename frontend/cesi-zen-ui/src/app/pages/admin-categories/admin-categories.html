@@ -1,0 +1,35 @@
+
+<section class="card">
+<h2>Admin — Catégories</h2>
+
+<div *ngIf="message()">{{ message() }}</div>
+<div *ngIf="loading()">Chargement…</div>
+
+<section style="margin: 1rem 0; padding: 1rem; border: 1px solid #ddd;">
+  <h3>{{ editId ? ('Modifier #' + editId) : 'Créer une catégorie' }}</h3>
+
+  <label>
+    Nom
+    <input [(ngModel)]="nom" />
+  </label>
+
+  <div style="display:flex; gap:.5rem; margin-top:.5rem;">
+    <button (click)="save()" [disabled]="loading()">{{ editId ? 'Enregistrer' : 'Créer' }}</button>
+    <button (click)="startCreate()" [disabled]="loading()">Nouveau</button>
+  </div>
+</section>
+
+<table *ngIf="!loading()">
+  <thead><tr><th>ID</th><th>Nom</th><th>Actions</th></tr></thead>
+  <tbody>
+    <tr *ngFor="let c of categories()">
+      <td>{{ c.id }}</td>
+      <td>{{ c.nom }}</td>
+      <td>
+        <button (click)="startEdit(c)">Edit</button>
+        <button (click)="delete(c.id)">Delete</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</section>

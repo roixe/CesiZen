@@ -5,7 +5,6 @@ import { Observable } from 'rxjs';
 import { Historique } from '../models/historique';
 
 export interface CreateHistoriqueRequest {
-  utilisateurId: number;
   exerciceId: number;
   dureeEffectiveSec: number;
 }
@@ -16,11 +15,11 @@ export class HistoriquesService {
 
   constructor(private http: HttpClient) {}
 
-  createHistorique(req: CreateHistoriqueRequest): Observable<{ id: number }> {
-    return this.http.post<{ id: number }>(`${this.baseUrl}/historiques`, req);
-  }
+getMyHistorique() {
+  return this.http.get<Historique[]>(`${this.baseUrl}/historiques/me`);
+}
 
-  getHistoriqueByUser(userId: number): Observable<Historique[]> {
-    return this.http.get<Historique[]>(`${this.baseUrl}/historiques/user/${userId}`);
-  }
+createHistorique(req: { exerciceId: number; dureeEffectiveSec: number; }) {
+  return this.http.post<{ id: number }>(`${this.baseUrl}/historiques`, req);
+}
 }

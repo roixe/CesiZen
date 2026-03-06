@@ -1,12 +1,43 @@
-<div class="app-container">
-  <h1> CesiZen </h1>
+<header class="topbar">
+  <div class="container topbar__inner">
+    <div class="brand">
+      <div class="brand__logos">
+        <!-- Slot logo CESIZen -->
+        <img class="brand__logo" src="/assets/cesizen-logo.png" alt="Logo CesiZen" />
+      </div>
 
-  <nav>
-    <a [routerLink]="['/breathing']">Respiration</a> |
-    <a [routerLink]="['/history']">Historique</a>
-    <a [routerLink]="['/info']">Informations</a>
+      <div class="brand__title">
+        <strong>CesiZen</strong>
+        <span>Santé mentale & gestion du stress</span>
+      </div>
+    </div>
 
+    <div class="ministry">
+      <!-- Slot logo Ministère -->
+      <img class="ministry__logo" src="../assets/ministere.png" alt="Ministère de la Santé et de la Prévention" />
+    </div>
+  </div>
+
+  <div class="container" style="padding-bottom: 14px;">
+  <nav class="nav">
+  <a [routerLink]="['/info']">Infos </a> 
+  <a [routerLink]="['/breathing']">Respiration </a> 
+  <a [routerLink]="['/history']">Historique </a> 
+  <a *ngIf="isAdmin()" [routerLink]="['/admin/users']">Admin</a> 
+  <a *ngIf="isAdmin()" [routerLink]="['/admin/articles']">Gestion Articles</a> 
+  <a *ngIf="isAdmin()" [routerLink]="['/admin/categories']"> Gestion Catégories</a> 
+  <a *ngIf="!isLoggedIn()" [routerLink]="['/login']">Login</a>
+  <button *ngIf="isLoggedIn()" (click)="logout()">Logout</button>
   </nav>
+  </div>
+</header>
 
+<main class="container page">
   <router-outlet></router-outlet>
-</div>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    © CesiZen — Prototype pédagogique. Données personnelles protégées (RGPD).
+  </div>
+</footer>

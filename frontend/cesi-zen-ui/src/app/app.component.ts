@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, computed } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -11,4 +12,13 @@ import { CommonModule } from '@angular/common';
 })
 export class AppComponent {
   title = 'CesiZen';
+
+  isLoggedIn = computed(() => this.auth.isLoggedIn());
+  isAdmin = computed(() => this.auth.isAdmin());
+
+  constructor(private auth: AuthService) {}
+
+  logout(): void {
+    this.auth.logout();
+  }
 }
