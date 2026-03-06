@@ -1,35 +1,72 @@
+<section class="card stack">
+  <header>
+    <h2 class="card__title">Admin — Catégories</h2>
+    <p class="card__sub">
+      Organise les contenus informationnels par catégories.
+    </p>
+  </header>
 
-<section class="card">
-<h2>Admin — Catégories</h2>
-
-<div *ngIf="message()">{{ message() }}</div>
-<div *ngIf="loading()">Chargement…</div>
-
-<section style="margin: 1rem 0; padding: 1rem; border: 1px solid #ddd;">
-  <h3>{{ editId ? ('Modifier #' + editId) : 'Créer une catégorie' }}</h3>
-
-  <label>
-    Nom
-    <input [(ngModel)]="nom" />
-  </label>
-
-  <div style="display:flex; gap:.5rem; margin-top:.5rem;">
-    <button (click)="save()" [disabled]="loading()">{{ editId ? 'Enregistrer' : 'Créer' }}</button>
-    <button (click)="startCreate()" [disabled]="loading()">Nouveau</button>
+  <div *ngIf="message()" class="alert"
+       [class.alert--error]="(message() ?? '').toLowerCase().includes('erreur')">
+    {{ message() }}
   </div>
-</section>
 
-<table *ngIf="!loading()">
-  <thead><tr><th>ID</th><th>Nom</th><th>Actions</th></tr></thead>
-  <tbody>
-    <tr *ngFor="let c of categories()">
-      <td>{{ c.id }}</td>
-      <td>{{ c.nom }}</td>
-      <td>
-        <button (click)="startEdit(c)">Edit</button>
-        <button (click)="delete(c.id)">Delete</button>
-      </td>
-    </tr>
-  </tbody>
-</table>
+  <div *ngIf="loading()" class="loading">Chargement…</div>
+
+  <section class="card card--soft">
+    <h3 class="card__title" style="font-size: 1.15rem;">
+      {{ editId ? ('Modifier la catégorie #' + editId) : 'Créer une catégorie' }}
+    </h3>
+
+    <div class="form">
+      <div class="field">
+        <label class="field__label" for="nom-categorie">Nom</label>
+        <input id="nom-categorie" class="input" [(ngModel)]="nom" />
+      </div>
+
+      <div class="form__actions">
+        <button class="btn btn--primary" (click)="save()" [disabled]="loading()">
+          {{ editId ? 'Enregistrer' : 'Créer' }}
+        </button>
+        <button class="btn btn--ghost" (click)="startCreate()" [disabled]="loading()">
+          Nouveau
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <div class="toolbar">
+    <div class="search">
+      <input
+        class="input search__input"
+        [(ngModel)]="categorySearch"
+        name="categorySearch"
+        type="text"
+        placeholder="Rechercher une catégorie..." />
+    </div>
+  </div>
+
+  <div *ngIf="!loading()" class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nom</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of filteredCategories()">
+          <td>{{ c.id }}</td>
+          <td>{{ c.nom }}</td>
+          <td>
+            <div class="actions">
+              <button class="btn btn--sm btn--ghost" (click)="startEdit(c)">Modifier</button>
+              <button class="btn btn--sm btn--danger" (click)="delete(c.id)">Supprimer</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </section>

@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { AdminService, AdminUser } from '../../services/admin.service';
 import { catchError, finalize } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-admin-users',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './admin-users.html'
 })
 export class AdminUsersComponent implements OnInit {
@@ -20,6 +21,20 @@ export class AdminUsersComponent implements OnInit {
   ngOnInit(): void {
     this.load();
   }
+
+userSearch = '';
+
+filteredUsers() {
+  const q = this.userSearch.trim().toLowerCase();
+
+  if (!q) return this.users();
+
+  return this.users().filter(u =>
+    (u.nom ?? '').toLowerCase().includes(q) ||
+    (u.email ?? '').toLowerCase().includes(q) ||
+    (u.role ?? '').toLowerCase().includes(q)
+  );
+}
 
   load(): void {
     this.loading.set(true);

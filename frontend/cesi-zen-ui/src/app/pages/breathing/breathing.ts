@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { HistoriquesService } from '../../services/historiques.service';
 import { timeout, catchError, finalize } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { FormsModule } from '@angular/forms';
+
 
 type Phase = 'IDLE' | 'IN' | 'HOLD' | 'OUT';
 
@@ -17,7 +19,7 @@ interface BreathingPreset {
 @Component({
   selector: 'app-breathing',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './breathing.html'
 })
 export class BreathingComponent implements OnDestroy {

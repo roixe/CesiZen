@@ -18,6 +18,16 @@ export class AppComponent {
 
   constructor(private auth: AuthService) {}
 
+  menuOpen = false;
+
+toggleMenu(): void {
+  this.menuOpen = !this.menuOpen;
+}
+
+closeMenu(): void {
+  this.menuOpen = false;
+}
+
   logout(): void {
     this.auth.logout();
   }

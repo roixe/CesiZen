@@ -5,6 +5,7 @@ import { AdminArticlesService, ArticleDto, UpsertArticleDto } from '../../servic
 import { Observable, of, catchError, finalize, timeout } from 'rxjs';
 import { AdminCategoriesService, CategorieDto } from '../../services/admin-categorie.service';
 
+
 @Component({
   selector: 'app-admin-articles',
   standalone: true,
@@ -31,6 +32,23 @@ export class AdminArticlesComponent implements OnInit {
     this.loadCategories();
     this.load();
   }
+  articleSearch = '';
+
+filteredArticles() {
+  const q = this.articleSearch.trim().toLowerCase();
+
+  if (!q) return this.articles();
+
+  return this.articles().filter(a =>
+    (a.titre ?? '').toLowerCase().includes(q) ||
+    this.categoryName(a.categorieId).toLowerCase().includes(q)
+  );
+}
+
+categoryName(categorieId: number): string {
+  const category = this.categories().find(c => c.id === categorieId);
+  return category?.nom ?? `#${categorieId}`;
+}
 
   loadCategories(): void {
   this.categoriesService.getAll().pipe(
