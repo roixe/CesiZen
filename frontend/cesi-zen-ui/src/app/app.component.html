@@ -1,64 +1,58 @@
 <header class="topbar">
-
   <div class="container topbar__inner">
 
-    <!-- Bloc marque -->
     <div class="brand">
-
-      <!-- Logo CESIZen -->
       <img
         class="brand__logo"
         src="/assets/cesizen-logo.png"
         alt="Logo CesiZen"
       />
 
-      <!-- Titre -->
       <div class="brand__title">
         <strong>CESIZen</strong>
         <span>Santé mentale & gestion du stress</span>
       </div>
 
-      <!-- Logo Ministère -->
       <img
         class="ministry__logo"
         src="/assets/ministere.png"
         alt="Ministère de la Santé et de la Prévention"
       />
-
     </div>
 
+    <button
+      class="burger"
+      type="button"
+      (click)="toggleMenu()"
+      [attr.aria-expanded]="menuOpen"
+      aria-label="Ouvrir le menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
   </div>
 
-  <!-- Navigation -->
   <div class="container nav__container">
+    <nav class="nav" [class.nav--open]="menuOpen">
+      <a routerLink="/info" (click)="closeMenu()">Infos</a>
+      <a routerLink="/breathing" (click)="closeMenu()">Respiration</a>
+      <a routerLink="/history" (click)="closeMenu()">Historique</a>
 
-    <nav class="nav">
+      <a *ngIf="isAdmin()" routerLink="/admin/users" (click)="closeMenu()">Admin</a>
+      <a *ngIf="isAdmin()" routerLink="/admin/articles" (click)="closeMenu()">Gestion Articles</a>
+      <a *ngIf="isAdmin()" routerLink="/admin/categories" (click)="closeMenu()">Gestion Catégories</a>
 
-      <a routerLink="/info">Infos</a>
-
-      <a routerLink="/breathing">Respiration</a>
-
-      <a routerLink="/history">Historique</a>
-
-      <a *ngIf="isAdmin()" routerLink="/admin/users">Admin</a>
-
-      <a *ngIf="isAdmin()" routerLink="/admin/articles">Gestion Articles</a>
-
-      <a *ngIf="isAdmin()" routerLink="/admin/categories">Gestion Catégories</a>
-
-      <a *ngIf="!isLoggedIn()" routerLink="/login">Login</a>
+      <a *ngIf="!isLoggedIn()" routerLink="/login" (click)="closeMenu()">Login</a>
 
       <button
         *ngIf="isLoggedIn()"
         class="btn btn--ghost nav__logout"
-        (click)="logout()">
+        type="button"
+        (click)="logout(); closeMenu()">
         Logout
       </button>
-
     </nav>
-
   </div>
-
 </header>
 
 <main class="container page">
