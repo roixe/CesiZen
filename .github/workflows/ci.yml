@@ -1,21 +1,10 @@
-name: CI
-
-on:
-  pull_request:
-    branches:
-      - develop
-  push:
-    branches:
-      - develop
-
-jobs:
   backend-tests:
     name: Backend - Build & Test
     runs-on: ubuntu-latest
 
     defaults:
       run:
-        working-directory: backend
+        working-directory: backend/CesiZen.Api
 
     steps:
       - name: Checkout repository
@@ -27,13 +16,14 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore CesiZen.Api.sln
 
       - name: Build
-        run: dotnet build --no-restore --configuration Release
+        run: dotnet build CesiZen.Api.sln --no-restore --configuration Release
 
       - name: Run backend tests
-        run: dotnet test --no-build --configuration Release --verbosity normal
+        run: dotnet test CesiZen.Api.sln --no-build --configuration Release --verbosity normal
+
 
   frontend-tests:
     name: Frontend - Install & Test
@@ -57,8 +47,5 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Chrome
-        uses: browser-actions/setup-chrome@v1
-
       - name: Run frontend tests
-        run: ng test --watch=false --browsers=ChromeHeadless
+        run: ng test
