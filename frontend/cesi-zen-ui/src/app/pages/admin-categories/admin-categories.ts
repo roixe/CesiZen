@@ -94,7 +94,6 @@ filteredCategories() {
     this.admin.delete(id).pipe(
       timeout(5000),
       catchError(err => {
-        // 409 = utilisée par des articles
         this.message.set(`Erreur suppression (status=${err?.status ?? 'n/a'})`);
         return of(null);
       }),
