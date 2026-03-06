@@ -26,14 +26,17 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
+      - name: List backend files
+        run: find . -maxdepth 3 -type f | sort
+
       - name: Restore dependencies
-        run: dotnet restore CesiZen.Api.Tests/CesiZen.Api.Tests.csproj
+        run: dotnet restore CESIZen.Api.Tests/CesiZen.Api.Tests.csproj
 
       - name: Build
-        run: dotnet build CesiZen.Api.Tests/CesiZen.Api.Tests.csproj --no-restore --configuration Release
+        run: dotnet build CESIZen.Api.Tests/CesiZen.Api.Tests.csproj --no-restore --configuration Release
 
       - name: Run backend tests
-        run: dotnet test CesiZen.Api.Tests/CesiZen.Api.Tests.csproj --no-build --configuration Release --verbosity normal
+        run: dotnet test CESIZen.Api.Tests/CesiZen.Api.Tests.csproj --no-build --configuration Release --verbosity normal
 
   frontend-tests:
     name: Frontend - Install & Test
@@ -58,4 +61,4 @@ jobs:
         run: npm ci
 
       - name: Run frontend tests
-        run: ng test
+        run: npx ng test
