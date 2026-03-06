@@ -1,19 +1,35 @@
-<h2>Connexion</h2>
+<section class="card auth">
+  <header>
+    <h2 class="card__title">Connexion</h2>
+    <p class="card__sub">
+      Connecte-toi pour accéder à ton espace CESIZen.
+    </p>
+  </header>
 
-<div *ngIf="message()">{{ message() }}</div>
+  <div *ngIf="message()" class="alert"
+       [class.alert--error]="(message() ?? '').toLowerCase().includes('erreur')">
+    {{ message() }}
+  </div>
 
-<form (ngSubmit)="submit()">
-  <label>Email</label>
-  <input [(ngModel)]="email" name="email" type="email" required />
+  <form class="form" (ngSubmit)="submit()">
+    <div class="field">
+      <label class="field__label" for="email">Email</label>
+      <input id="email" class="input" [(ngModel)]="email" name="email" type="email" required />
+    </div>
 
-  <label>Mot de passe</label>
-  <input [(ngModel)]="password" name="password" type="password" required />
+    <div class="field">
+      <label class="field__label" for="password">Mot de passe</label>
+      <input id="password" class="input" [(ngModel)]="password" name="password" type="password" required />
+    </div>
 
-  <button type="submit" [disabled]="loading()">Se connecter</button>
-</form>
+    <div class="form__actions">
+      <button class="btn btn--primary" type="submit" [disabled]="loading()">
+        {{ loading() ? 'Connexion…' : 'Se connecter' }}
+      </button>
+    </div>
+  </form>
 
-<div *ngIf="loading()">Chargement…</div>
-
-<p>
-  Pas de compte ? <a routerLink="/register">Créer un compte</a>
-</p>
+  <p class="auth__foot">
+    Pas de compte ? <a routerLink="/register">Créer un compte</a>
+  </p>
+</section>

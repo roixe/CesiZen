@@ -4,11 +4,12 @@ import { HistoriquesService } from '../../services/historiques.service';
 import { Historique } from '../../models/historique';
 import { finalize, timeout, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './history.html'
 })
 export class HistoryComponent implements OnInit {

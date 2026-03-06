@@ -6,11 +6,13 @@ import { Article } from '../../models/article';
 import { Categorie } from '../../models/categorie';
 import { catchError, finalize, timeout } from 'rxjs/operators';
 import { of, forkJoin } from 'rxjs';
+import { FormsModule } from '@angular/forms';
+
 
 @Component({
   selector: 'app-info',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './info.html'
 })
 export class InfoComponent implements OnInit {
@@ -27,8 +29,20 @@ export class InfoComponent implements OnInit {
     return map;
   });
 
-  constructor(private infosService: InfosService) {}
+constructor(private infosService: InfosService) {}
+searchTerm = '';
 
+filteredArticles() {
+  const q = this.searchTerm.trim().toLowerCase();
+
+  if (!q) return this.articles();
+
+  return this.articles().filter(a =>
+    (a.titre ?? '').toLowerCase().includes(q) ||
+    (a.contenu ?? '').toLowerCase().includes(q) ||
+    this.categoryName(a.categorieId).toLowerCase().includes(q)
+  );
+}
   ngOnInit(): void {
     this.load();
   }

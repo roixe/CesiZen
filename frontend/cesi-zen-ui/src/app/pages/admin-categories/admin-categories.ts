@@ -22,7 +22,17 @@ export class AdminCategoriesComponent implements OnInit {
   constructor(private admin: AdminCategoriesService) {}
 
   ngOnInit(): void { this.load(); }
+categorySearch = '';
 
+filteredCategories() {
+  const q = this.categorySearch.trim().toLowerCase();
+
+  if (!q) return this.categories();
+
+  return this.categories().filter(c =>
+    (c.nom ?? '').toLowerCase().includes(q)
+  );
+}
   load(): void {
     this.loading.set(true);
     this.message.set(undefined);

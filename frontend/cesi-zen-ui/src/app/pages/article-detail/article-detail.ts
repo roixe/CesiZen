@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { InfosService } from '../../services/infos.service';
 import { Article } from '../../models/article';
+import { FormsModule } from '@angular/forms';
+
 
 @Component({
   selector: 'app-article-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './article-detail.html'
 })
 export class ArticleDetailComponent implements OnInit {
