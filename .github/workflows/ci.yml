@@ -1,3 +1,14 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - develop
+  push:
+    branches:
+      - develop
+
+jobs:
   backend-tests:
     name: Backend - Build & Test
     runs-on: ubuntu-latest
@@ -13,17 +24,16 @@
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: 8.0.x
 
       - name: Restore dependencies
-        run: dotnet restore CesiZen.Api.sln
+        run: dotnet restore CesiZen.Api.Tests/CesiZen.Api.Tests.csproj
 
       - name: Build
-        run: dotnet build CesiZen.Api.sln --no-restore --configuration Release
+        run: dotnet build CesiZen.Api.Tests/CesiZen.Api.Tests.csproj --no-restore --configuration Release
 
       - name: Run backend tests
-        run: dotnet test CesiZen.Api.sln --no-build --configuration Release --verbosity normal
-
+        run: dotnet test CesiZen.Api.Tests/CesiZen.Api.Tests.csproj --no-build --configuration Release --verbosity normal
 
   frontend-tests:
     name: Frontend - Install & Test
@@ -40,8 +50,8 @@
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: 20
+          cache: npm
           cache-dependency-path: frontend/cesi-zen-ui/package-lock.json
 
       - name: Install dependencies
