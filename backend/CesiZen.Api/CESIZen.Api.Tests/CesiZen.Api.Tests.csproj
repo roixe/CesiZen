@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CESIZen.Api\CesiZen.Api.csproj" />
+    <ProjectReference Include="..\CesiZen.Api\CesiZen.Api.csproj" />
     <ProjectReference Include="..\CesiZen.Infrastructure\CesiZen.Infrastructure.csproj" />
     <ProjectReference Include="..\..\CesiZen.Domain\CesiZen.Domain.csproj" />
   </ItemGroup>
