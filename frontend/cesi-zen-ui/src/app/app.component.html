@@ -1,17 +1,66 @@
-<div class="app-container">
-  <h1>{{ title }}</h1>
+<header class="topbar">
+  <div class="container topbar__inner">
 
-  <div *ngIf="healthStatus; else errorTpl" class="card">
-    <h2>Backend connecté</h2>
-    <p><strong>Status :</strong> {{ healthStatus.status }}</p>
-    <p><strong>Backend :</strong> {{ healthStatus.backend }}</p>
-    <p><strong>Heure (UTC) :</strong> {{ healthStatus.timestamp }}</p>
+    <div class="brand">
+      <img
+        class="brand__logo"
+        src="/assets/cesizen-logo.png"
+        alt="Logo CesiZen"
+      />
+
+      <div class="brand__title">
+        <strong>CESIZen</strong>
+        <span>Santé mentale & gestion du stress</span>
+      </div>
+
+      <img
+        class="ministry__logo"
+        src="/assets/ministere.png"
+        alt="Ministère de la Santé et de la Prévention"
+      />
+    </div>
+
+    <button
+      class="burger"
+      type="button"
+      (click)="toggleMenu()"
+      [attr.aria-expanded]="menuOpen"
+      aria-label="Ouvrir le menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
   </div>
 
-  <ng-template #errorTpl>
-    <div class="card error">
-      <h2>Backend non disponible</h2>
-      <p>{{ errorMessage }}</p>
-    </div>
-  </ng-template>
-</div>
+  <div class="container nav__container">
+    <nav class="nav" [class.nav--open]="menuOpen">
+      <a routerLink="/info" (click)="closeMenu()">Infos</a>
+      <a routerLink="/breathing" (click)="closeMenu()">Respiration</a>
+      <a routerLink="/history" (click)="closeMenu()">Historique</a>
+
+      <a *ngIf="isAdmin()" routerLink="/admin/users" (click)="closeMenu()">Admin</a>
+      <a *ngIf="isAdmin()" routerLink="/admin/articles" (click)="closeMenu()">Gestion Articles</a>
+      <a *ngIf="isAdmin()" routerLink="/admin/categories" (click)="closeMenu()">Gestion Catégories</a>
+
+      <a *ngIf="!isLoggedIn()" routerLink="/login" (click)="closeMenu()">Login</a>
+
+      <button
+        *ngIf="isLoggedIn()"
+        class="btn btn--ghost nav__logout"
+        type="button"
+        (click)="logout(); closeMenu()">
+        Logout
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main class="container page">
+  <router-outlet></router-outlet>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    © CesiZen — Prototype pédagogique. Données personnelles protégées (RGPD).
+  </div>
+</footer>

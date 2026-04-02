@@ -1,0 +1,29 @@
+<section class="card stack">
+  <header>
+    <h2 class="card__title">Historique</h2>
+    <p class="card__sub">
+      Retrouve les dernières séances enregistrées.
+    </p>
+  </header>
+
+  <div *ngIf="loading()" class="loading">Chargement…</div>
+
+  <div *ngIf="message()" class="alert"
+       [class.alert--error]="(message() ?? '').toLowerCase().includes('erreur')">
+    {{ message() }}
+  </div>
+
+  <div *ngIf="!loading() && historiques().length === 0" class="empty">
+    Aucun historique disponible pour le moment.
+  </div>
+
+  <ul *ngIf="!loading() && historiques().length > 0" class="list">
+    <li *ngFor="let h of historiques()" class="list-item">
+      <h3 class="list-item__title">Séance #{{ h.id }}</h3>
+      <div class="list-item__meta">
+        <span class="pill">Date : {{ h.date }}</span>
+        <span class="pill pill--muted">Durée : {{ h.dureeSec }}s</span>
+      </div>
+    </li>
+  </ul>
+</section>

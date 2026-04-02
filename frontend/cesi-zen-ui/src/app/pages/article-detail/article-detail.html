@@ -1,0 +1,22 @@
+<section class="card article">
+  <a class="back-link" [routerLink]="['/info']">← Retour aux informations</a>
+
+  <div *ngIf="loading()" class="loading">Chargement…</div>
+
+  <div *ngIf="message()" class="alert"
+       [class.alert--error]="(message() ?? '').toLowerCase().includes('erreur')">
+    {{ message() }}
+  </div>
+
+  <div *ngIf="!loading() && article()">
+    <h2 class="card__title">{{ article()!.titre }}</h2>
+
+    <div class="article__meta">
+      <span *ngIf="article()!.datePublication" class="pill pill--muted">
+        Publié : {{ article()!.datePublication }}
+      </span>
+    </div>
+
+    <div class="article__content">{{ article()!.contenu }}</div>
+  </div>
+</section>

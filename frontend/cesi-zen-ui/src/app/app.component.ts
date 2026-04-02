@@ -1,32 +1,34 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, computed } from '@angular/core';
+import { RouterLink, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
-import { HealthService, HealthStatus } from './services/health.service';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, HttpClientModule],
+  imports: [CommonModule, RouterLink, RouterOutlet],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit {
-
+export class AppComponent {
   title = 'CesiZen';
-  healthStatus?: HealthStatus;
-  errorMessage?: string;
 
-  constructor(private healthService: HealthService) { }
+  isLoggedIn = computed(() => this.auth.isLoggedIn());
+  isAdmin = computed(() => this.auth.isAdmin());
 
-  ngOnInit(): void {
-    this.healthService.getHealth().subscribe({
-      next: (status: HealthStatus) => {
-        this.healthStatus = status;
-      },
-      error: (error: any) => {
-        console.error(error);
-        this.errorMessage = 'Impossible de contacter le backend.';
-      }
-    });
+  constructor(private auth: AuthService) {}
+
+  menuOpen = false;
+
+toggleMenu(): void {
+  this.menuOpen = !this.menuOpen;
+}
+
+closeMenu(): void {
+  this.menuOpen = false;
+}
+
+  logout(): void {
+    this.auth.logout();
   }
 }
