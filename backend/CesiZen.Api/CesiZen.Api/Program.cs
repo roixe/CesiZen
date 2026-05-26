@@ -91,7 +91,6 @@ builder.Services
             ClockSkew = TimeSpan.FromMinutes(2)
         };
 
-        // 🔍 utile en debug: voir pourquoi ça échoue
         options.Events = new JwtBearerEvents
         {
             OnAuthenticationFailed = ctx =>
