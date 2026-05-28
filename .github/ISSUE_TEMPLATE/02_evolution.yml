@@ -1,0 +1,62 @@
+name: "✨ Demande d'évolution"
+description: "Proposer une nouvelle fonctionnalité ou une amélioration"
+title: "[Évolution] "
+labels: ["type: evolution", "statut: à qualifier"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Décrivez le besoin et la valeur attendue. Toute évolution fera l'objet
+        d'une analyse (documentation, délai, coût) avant réalisation.
+
+  - type: textarea
+    id: besoin
+    attributes:
+      label: Besoin
+      description: Quel est le besoin ou le problème à résoudre ?
+      placeholder: "Permettre à l'utilisateur de réinitialiser son mot de passe oublié."
+    validations:
+      required: true
+
+  - type: textarea
+    id: valeur
+    attributes:
+      label: Valeur attendue
+      placeholder: "Réduire les comptes inutilisables et les sollicitations support."
+    validations:
+      required: true
+
+  - type: textarea
+    id: criteres
+    attributes:
+      label: Critères d'acceptation
+      placeholder: |
+        - Un lien « Mot de passe oublié ? » est présent sur la page de connexion
+        - Un email avec un lien à usage unique (expirant) est envoyé
+        - L'utilisateur peut définir un nouveau mot de passe
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priorite
+    attributes:
+      label: Priorité
+      options:
+        - "Haute"
+        - "Moyenne"
+        - "Basse"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: module
+    attributes:
+      label: Module concerné
+      options:
+        - "Comptes utilisateurs"
+        - "Informations / Articles"
+        - "Exercices de respiration"
+        - "Déploiement / Infrastructure"
+        - "Autre"
+    validations:
+      required: true

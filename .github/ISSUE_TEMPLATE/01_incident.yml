@@ -1,0 +1,84 @@
+name: "🐞 Rapport d'incident"
+description: "Signaler un dysfonctionnement de l'application CESIZen"
+title: "[Incident] "
+labels: ["type: bug", "statut: à qualifier"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci de décrire l'incident le plus précisément possible.
+        La gravité conditionne le délai de prise en charge (SLA — voir plan de maintenance).
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description de l'incident
+      description: Que se passe-t-il ?
+      placeholder: "Lors de la connexion, l'application affiche une erreur 500…"
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Étapes de reproduction
+      description: Comment reproduire le problème ?
+      placeholder: |
+        1. Aller sur la page de connexion
+        2. Saisir un email valide et un mot de passe
+        3. Cliquer sur « Se connecter »
+        4. Observer l'erreur
+    validations:
+      required: true
+
+  - type: textarea
+    id: attendu
+    attributes:
+      label: Comportement attendu
+      placeholder: "L'utilisateur devrait être redirigé vers son tableau de bord."
+    validations:
+      required: true
+
+  - type: textarea
+    id: observe
+    attributes:
+      label: Comportement observé
+      placeholder: "Une erreur 500 s'affiche et la connexion échoue."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: gravite
+    attributes:
+      label: Gravité
+      description: |
+        Bloquant = service inutilisable, aucun contournement.
+        Majeur = service inopérant par intermittence ou via contournement.
+        Mineur = simple altération, service opérationnel.
+      options:
+        - "Bloquant"
+        - "Majeur"
+        - "Mineur"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: module
+    attributes:
+      label: Module concerné
+      options:
+        - "Comptes utilisateurs"
+        - "Informations / Articles"
+        - "Exercices de respiration"
+        - "Déploiement / Infrastructure"
+        - "Autre"
+    validations:
+      required: true
+
+  - type: input
+    id: environnement
+    attributes:
+      label: Environnement
+      placeholder: "Production / Test ; navigateur Chrome 125 ; Windows 11"
+    validations:
+      required: true
