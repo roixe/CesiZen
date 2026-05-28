@@ -1,4 +1,4 @@
-name: "✨ Demande d'évolution"
+name: "Change request"
 description: "Proposer une nouvelle fonctionnalité ou une amélioration"
 title: "[Évolution] "
 labels: ["type: evolution", "statut: à qualifier"]
