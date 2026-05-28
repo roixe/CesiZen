@@ -1,6 +1,5 @@
 # CesiZen
 Projet Développement et Test 
-
 Étapes d’installation :
 1. Récupération du projet
 Cloner le dépôt ou extraire l’archive :
