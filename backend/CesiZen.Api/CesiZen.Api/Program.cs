@@ -91,7 +91,6 @@ builder.Services
             ClockSkew = TimeSpan.FromMinutes(2)
         };
 
-        // 🔍 utile en debug: voir pourquoi ça échoue
         options.Events = new JwtBearerEvents
         {
             OnAuthenticationFailed = ctx =>
@@ -118,9 +117,15 @@ app.UseHttpsRedirection();
 
 app.UseCors(corsPolicyName);
 
-app.UseAuthentication();
-app.UseAuthorization();
+    app.UseAuthentication();
+    app.UseAuthorization();
 
-app.MapControllers();
+    app.MapControllers();
 
-app.Run();
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<CesiZenDbContext>();
+        db.Database.Migrate();
+    }
+
+    app.Run();

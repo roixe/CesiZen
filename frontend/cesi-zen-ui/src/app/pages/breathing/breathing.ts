@@ -73,7 +73,7 @@ export class BreathingComponent implements OnDestroy {
 
   toggle(): void {
     if (!this.selected()) {
-      this.message.set("Sélectionne un exercice.");
+      this.message.set("Sélectionnez un exercice.");
       return;
     }
 
@@ -152,34 +152,42 @@ export class BreathingComponent implements OnDestroy {
 
   /* ---------------- save manually ---------------- */
 
-  saveManual(): void {
+saveManual(): void {
 
-    const preset = this.selected();
+  const preset = this.selected();
 
-    if (!preset) {
-      this.message.set("Choisis un exercice avant d'enregistrer.");
-      return;
-    }
-
-    this.saving.set(true);
-    this.message.set("Enregistrement...");
-
-    /* durée approximative */
-    const duration = preset.inspire + preset.hold + preset.expire;
-
-    this.historiquesService.createHistorique({
-      exerciceId: 1, // MVP : un id générique respiration
-      dureeEffectiveSec: duration
-    }).pipe(
-      timeout(5000),
-      catchError(err => {
-        console.error(err);
-        this.message.set("Erreur lors de l'enregistrement");
-        return of(null);
-      }),
-      finalize(() => this.saving.set(false))
-    ).subscribe(res => {
-      if (res) this.message.set("Session enregistrée ✔");
-    });
+  if (!preset) {
+    this.message.set("Choisissez un exercice avant d'enregistrer.");
+    return;
   }
+
+  this.saving.set(true);
+  this.message.set("Enregistrement en cours...");
+
+  const duration = preset.inspire + preset.hold + preset.expire;
+
+  this.historiquesService.createHistorique({
+    exerciceId: 1,
+    dureeEffectiveSec: duration
+  }).pipe(
+    timeout(5000),
+    catchError(err => {
+
+      if (err.status === 401) {
+        this.message.set("Session expirée, reconnectez-vous.");
+      } else if (err.status === 0) {
+        this.message.set("Serveur indisponible.");
+      } else {
+        this.message.set("Impossible d'enregistrer la session.");
+      }
+
+      return of(null);
+    }),
+    finalize(() => this.saving.set(false))
+  ).subscribe(res => {
+    if (res) {
+      this.message.set("Session enregistrée ✔");
+    }
+  });
+}
 }

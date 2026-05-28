@@ -19,17 +19,32 @@ export class ArticleDetailComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private infos: InfosService) {}
 
-  ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    if (!id) {
-      this.message.set('Article introuvable.');
-      return;
-    }
+ngOnInit(): void {
+  const id = Number(this.route.snapshot.paramMap.get('id'));
 
-    this.loading.set(true);
-    this.infos.getArticleById(id).subscribe({
-      next: (a) => { this.article.set(a); this.loading.set(false); },
-      error: (err) => { this.loading.set(false); this.message.set(`Erreur (status=${err?.status ?? 'n/a'})`); }
-    });
+  if (!id) {
+    this.message.set("Article introuvable.");
+    return;
   }
+
+  this.loading.set(true);
+
+  this.infos.getArticleById(id).subscribe({
+    next: (a) => {
+      this.article.set(a);
+      this.loading.set(false);
+    },
+    error: (err) => {
+      this.loading.set(false);
+
+      if (err.status === 404) {
+        this.message.set("Article introuvable.");
+      } else if (err.status === 0) {
+        this.message.set("Impossible de contacter le serveur.");
+      } else {
+        this.message.set("Erreur lors du chargement de l'article.");
+      }
+    }
+  });
+}
 }
