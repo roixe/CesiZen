@@ -1,4 +1,4 @@
-name: "🐞 Rapport d'incident"
+name: "Incident"
 description: "Signaler un dysfonctionnement de l'application CESIZen"
 title: "[Incident] "
 labels: ["type: bug", "statut: à qualifier"]
