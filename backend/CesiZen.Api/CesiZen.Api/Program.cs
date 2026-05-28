@@ -117,9 +117,15 @@ app.UseHttpsRedirection();
 
 app.UseCors(corsPolicyName);
 
-app.UseAuthentication();
-app.UseAuthorization();
+    app.UseAuthentication();
+    app.UseAuthorization();
 
-app.MapControllers();
+    app.MapControllers();
 
-app.Run();
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<CesiZenDbContext>();
+        db.Database.Migrate();
+    }
+
+    app.Run();

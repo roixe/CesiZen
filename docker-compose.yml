@@ -1,0 +1,67 @@
+# docker-compose.yml — CESIZen (à placer à la racine du dépôt CesiZen/)
+# Démarrage : docker compose up -d --build
+# Application accessible ensuite sur http://localhost:8080
+
+services:
+  # --------- Base de données MySQL 8 ---------
+  cesizen-db:
+    image: mysql:8.0
+    container_name: cesizen-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - cesizen-data:/var/lib/mysql
+    networks:
+      - cesizen-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${DB_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    # Pas de ports publiés : la base n'est joignable que sur le réseau interne.
+
+  # --------- API ASP.NET Core 8 ---------
+  cesizen-api:
+    build:
+      context: ./backend          # contexte = backend/ (inclut Domain, hors dossier CesiZen.Api)
+      dockerfile: Dockerfile
+    container_name: cesizen-api
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+      ASPNETCORE_URLS: "http://+:8080"
+      ConnectionStrings__DefaultConnection: "Server=cesizen-db;Port=3306;Database=${DB_NAME};User Id=${DB_USER};Password=${DB_PASSWORD};"
+      Jwt__Issuer: ${JWT_ISSUER}
+      Jwt__Audience: ${JWT_AUDIENCE}
+      Jwt__Key: ${JWT_KEY}
+    depends_on:
+      cesizen-db:
+        condition: service_healthy   # l'API attend que la base soit saine
+    networks:
+      - cesizen-net
+    # Pas de ports publiés : l'API est joignable uniquement via Nginx.
+
+  # --------- Frontend Angular 21 servi par Nginx ---------
+  cesizen-web:
+    build:
+      context: ./frontend/cesi-zen-ui
+      dockerfile: Dockerfile
+    container_name: cesizen-web
+    restart: unless-stopped
+    ports:
+      - "8080:80"                  # http://localhost:8080  (en prod : 443:443 avec TLS)
+    depends_on:
+      - cesizen-api
+    networks:
+      - cesizen-net
+
+volumes:
+  cesizen-data:
+
+networks:
+  cesizen-net:
+    driver: bridge

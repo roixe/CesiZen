@@ -1,0 +1,5 @@
+# frontend/cesi-zen-ui/.dockerignore
+node_modules/
+dist/
+.angular/
+.vscode/

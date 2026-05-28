@@ -35,8 +35,8 @@ namespace CesiZen.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "utilisateur",
                 columns: new[] { "Id", "Actif", "DateCreation", "Email", "MotDePasseHash", "Nom", "Role" },
-                values: new object[] { 1, true, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin@cesizen.local", "Admin", "Admin", "ADMIN" });
 
+                values: new object[] { 1, true, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin@cesizen.local", "AQAAAAEAAYagAAAAEN7+03cLBoJ2S8AK7lV7Qkr1bI40I4yPC/sqTXaG7PPnzTGWXGU2Z095QpWrDvx//w==", "Admin", "ADMIN" });
             migrationBuilder.InsertData(
                 table: "article",
                 columns: new[] { "Id", "CategorieId", "Contenu", "DatePublication", "GereParUserId", "Public", "Titre" },
