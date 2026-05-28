@@ -28,10 +28,17 @@ export class LoginComponent {
         this.loading.set(false);
         this.router.navigate(['/breathing']);
       },
-      error: (err) => {
-        this.loading.set(false);
-        this.message.set(`Login échoué (status=${err?.status ?? 'n/a'})`);
-      }
+error: (err) => {
+  this.loading.set(false);
+
+  if (err.status === 401) {
+    this.message.set("Email ou mot de passe incorrect.");
+  } else if (err.status === 0) {
+    this.message.set("Impossible de contacter le serveur.");
+  } else {
+    this.message.set("Connexion impossible.");
+  }
+}
     });
   }
 }

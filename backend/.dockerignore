@@ -1,0 +1,6 @@
+# backend/.dockerignore — évite de copier les artefacts locaux dans l'image
+**/bin/
+**/obj/
+**/.vs/
+**/*.user
+**/appsettings.Development.json

@@ -29,10 +29,17 @@ export class RegisterComponent {
         this.loading.set(false);
         this.router.navigate(['/breathing']);
       },
-      error: (err) => {
-        this.loading.set(false);
-        this.message.set(`Register échoué (status=${err?.status ?? 'n/a'})`);
-      }
+error: (err) => {
+  this.loading.set(false);
+
+  if (err.status === 400) {
+    this.message.set("Informations invalides");
+  } else if (err.status === 0) {
+    this.message.set("Serveur indisponible.");
+  } else {
+    this.message.set("Impossible de créer le compte.");
+  }
+}
     });
   }
 }
