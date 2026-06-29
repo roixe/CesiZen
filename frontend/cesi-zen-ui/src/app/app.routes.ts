@@ -11,6 +11,7 @@ import { AdminUsersComponent } from './pages/admin-users/admin-users';
 import { adminGuard } from './guards/admin.guard';
 import { AdminArticlesComponent } from './pages/admin-articles/admin-articles';
 import { AdminCategoriesComponent } from './pages/admin-categories/admin-categories';
+import { AccountComponent } from './pages/account/account';
 
 
 
@@ -25,6 +26,8 @@ export const routes: Routes = [
 
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+
+  { path: 'account', component: AccountComponent, canActivate: [authGuard] },
 
   { path: 'admin/users', component: AdminUsersComponent, canActivate: [adminGuard] },
   { path: 'admin/articles', component: AdminArticlesComponent, canActivate: [adminGuard] },

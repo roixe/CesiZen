@@ -1,9 +1,10 @@
-﻿using CesiZen.Infrastructure.Data;
+using CesiZen.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using System.Threading.RateLimiting; // [SÉCU 1] rate limiting
 
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
@@ -24,6 +25,21 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
+});
+
+// --- [SÉCU 1] Rate limiting : protège /auth/login contre la force brute ---
+// 5 tentatives par minute et par adresse IP, puis HTTP 429.
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.AddPolicy("login", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 5,
+                Window = TimeSpan.FromMinutes(1)
+            }));
 });
 
 // --- Controllers + Swagger ---
@@ -59,7 +75,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// --- JWT Auth  ---
+// --- JWT Auth ---
 var jwtIssuer = builder.Configuration["Jwt:Issuer"];
 var jwtAudience = builder.Configuration["Jwt:Audience"];
 var jwtKey = builder.Configuration["Jwt:Key"];
@@ -117,15 +133,18 @@ app.UseHttpsRedirection();
 
 app.UseCors(corsPolicyName);
 
-    app.UseAuthentication();
-    app.UseAuthorization();
+app.UseRateLimiter(); // [SÉCU 1] active le rate limiting
 
-    app.MapControllers();
+app.UseAuthentication();
+app.UseAuthorization();
 
-    using (var scope = app.Services.CreateScope())
-    {
-        var db = scope.ServiceProvider.GetRequiredService<CesiZenDbContext>();
-        db.Database.Migrate();
-    }
+app.MapControllers();
 
-    app.Run();
+// Applique automatiquement les migrations (schéma + seed + nouvelles colonnes) au démarrage.
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<CesiZenDbContext>();
+    db.Database.Migrate();
+}
+
+app.Run();

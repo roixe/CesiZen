@@ -27,8 +27,17 @@
       <input id="password" class="input" [(ngModel)]="password" name="password" type="password" required />
     </div>
 
+    <!-- [SÉCU 4] Consentement RGPD -->
+    <div class="field field--checkbox">
+      <label>
+        <input type="checkbox" [(ngModel)]="consentement" name="consentement" required />
+        J'accepte que mes données (nom, email) soient traitées conformément à la
+        politique de confidentialité (RGPD).
+      </label>
+    </div>
+
     <div class="form__actions">
-      <button class="btn btn--primary" type="submit" [disabled]="loading()">
+      <button class="btn btn--primary" type="submit" [disabled]="loading() || !consentement">
         {{ loading() ? 'Création…' : 'Créer mon compte' }}
       </button>
     </div>

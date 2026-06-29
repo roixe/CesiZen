@@ -1,0 +1,66 @@
+<section class="card auth">
+  <header>
+    <h2 class="card__title">Mon compte</h2>
+    <p class="card__sub">Gérez vos informations et vos données personnelles (RGPD).</p>
+  </header>
+
+  <div *ngIf="message()" class="alert"
+       [class.alert--error]="(message() ?? '').toLowerCase().includes('erreur')">
+    {{ message() }}
+  </div>
+
+  <!-- Profil -->
+  <div class="field">
+    <span class="field__label">Nom</span>
+    <p>{{ user()?.nom }}</p>
+  </div>
+  <div class="field">
+    <span class="field__label">Email</span>
+    <p>{{ user()?.email }}</p>
+  </div>
+  <div class="field">
+    <span class="field__label">Rôle</span>
+    <p>{{ user()?.role }}</p>
+  </div>
+
+  <hr />
+
+  <!-- [RGPD] Portabilité -->
+  <h3>Mes données</h3>
+  <p class="card__sub">
+    Conformément au RGPD, vous pouvez récupérer une copie de l'ensemble des données
+    que nous détenons à votre sujet.
+  </p>
+  <div class="form__actions">
+    <button class="btn btn--primary" type="button" (click)="exportData()" [disabled]="loading()">
+      {{ loading() ? 'Veuillez patienter…' : 'Exporter mes données (JSON)' }}
+    </button>
+  </div>
+
+  <hr />
+
+  <!-- [RGPD] Effacement -->
+  <h3>Supprimer mon compte</h3>
+  <p class="card__sub">
+    Vous pouvez exercer votre droit à l'effacement. Cette action supprime
+    définitivement votre compte et l'ensemble de vos données. Elle est irréversible.
+  </p>
+
+  <div class="form__actions" *ngIf="!confirmDelete()">
+    <button class="btn btn--ghost" type="button" (click)="askDelete()" [disabled]="loading()">
+      Supprimer mon compte
+    </button>
+  </div>
+
+  <div *ngIf="confirmDelete()" class="alert alert--error">
+    <p>Êtes-vous sûr ? Cette suppression est définitive.</p>
+    <div class="form__actions">
+      <button class="btn btn--ghost" type="button" (click)="cancelDelete()" [disabled]="loading()">
+        Annuler
+      </button>
+      <button class="btn btn--primary" type="button" (click)="deleteAccount()" [disabled]="loading()">
+        {{ loading() ? 'Suppression…' : 'Oui, supprimer définitivement' }}
+      </button>
+    </div>
+  </div>
+</section>
