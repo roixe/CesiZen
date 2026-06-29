@@ -35,7 +35,8 @@ public class AuthControllerTests
         var dto = new RegisterRequestDto(
             "Alice",
             "alice@test.com",
-            "Password123!"
+            "Password123!",
+            true
         );
 
         var result = await controller.Register(dto);
@@ -72,7 +73,8 @@ public class AuthControllerTests
         var dto = new RegisterRequestDto(
             "Alice 2",
             "alice@test.com",
-            "Password123!"
+            "Password123!",
+            true
         );
 
         var result = await controller.Register(dto);
