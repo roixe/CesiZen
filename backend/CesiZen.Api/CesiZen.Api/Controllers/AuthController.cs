@@ -1,4 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using CesiZen.Api.DTOs.Auth;
@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.RateLimiting; // [SÉCU 1]
 
 namespace CesiZen.Api.Controllers;
 
@@ -30,6 +31,10 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<ActionResult<AuthResponseDto>> Register(RegisterRequestDto dto)
     {
+        // [SÉCU 4] Consentement RGPD obligatoire à la création de compte
+        if (!dto.Consentement)
+            return BadRequest("Le consentement au traitement des données (RGPD) est requis.");
+
         var email = dto.Email.Trim().ToLowerInvariant();
 
         var exists = await _db.Utilisateurs.AsNoTracking().AnyAsync(u => u.Email == email);
@@ -41,7 +46,8 @@ public class AuthController : ControllerBase
             Email = email,
             Role = "USER",
             Actif = true,
-            DateCreation = DateTime.UtcNow
+            DateCreation = DateTime.UtcNow,
+            DateConsentement = DateTime.UtcNow // [SÉCU 4] horodatage du consentement
         };
 
         user.MotDePasseHash = _passwordHasher.HashPassword(user, dto.Password);
@@ -56,7 +62,9 @@ public class AuthController : ControllerBase
             new AuthUserDto(user.Id, user.Nom, user.Email, user.Role)
         ));
     }
+
     [AllowAnonymous]
+    [EnableRateLimiting("login")] // [SÉCU 1] anti force brute
     [HttpPost("login")]
     public async Task<ActionResult<AuthResponseDto>> Login(LoginRequestDto dto)
     {
@@ -80,8 +88,6 @@ public class AuthController : ControllerBase
 
     private string GenerateJwt(User user)
     {
-        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString());
-        new Claim(ClaimTypes.Role, user.Role);
         var issuer = _config["Jwt:Issuer"];
         var audience = _config["Jwt:Audience"];
         var key = _config["Jwt:Key"];

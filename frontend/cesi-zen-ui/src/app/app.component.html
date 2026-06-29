@@ -42,6 +42,8 @@
       <a *ngIf="isAdmin()" routerLink="/admin/articles" (click)="closeMenu()">Gestion Articles</a>
       <a *ngIf="isAdmin()" routerLink="/admin/categories" (click)="closeMenu()">Gestion Catégories</a>
 
+      <a *ngIf="isLoggedIn()" routerLink="/account" (click)="closeMenu()">Mon compte</a>
+
       <a *ngIf="!isLoggedIn()" routerLink="/login" (click)="closeMenu()">Login</a>
 
       <button

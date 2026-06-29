@@ -1,0 +1,23 @@
+version: 2
+updates:
+  # Dépendances .NET (NuGet)
+  - package-ecosystem: "nuget"
+    directory: "/backend/CesiZen.Api"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels: ["type: evolution", "module: infra"]
+
+  # Dépendances Angular (npm)
+  - package-ecosystem: "npm"
+    directory: "/frontend/cesi-zen-ui"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels: ["type: evolution", "module: infra"]
+
+  # Mises à jour des actions GitHub (CI/CD)
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"

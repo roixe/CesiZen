@@ -1,9 +1,9 @@
-# docker-compose.yml — CESIZen (à placer à la racine du dépôt CesiZen/)
+# docker-compose.yml — CESIZen (racine du dépôt)
 # Démarrage : docker compose up -d --build
-# Application accessible ensuite sur http://localhost:8080
+#   HTTP  : http://localhost:8080
+#   HTTPS : https://localhost:8443   ([SÉCU 2] certificat auto-signé en démo)
 
 services:
-  # --------- Base de données MySQL 8 ---------
   cesizen-db:
     image: mysql:8.0
     container_name: cesizen-db
@@ -22,12 +22,10 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-    # Pas de ports publiés : la base n'est joignable que sur le réseau interne.
 
-  # --------- API ASP.NET Core 8 ---------
   cesizen-api:
     build:
-      context: ./backend          # contexte = backend/ (inclut Domain, hors dossier CesiZen.Api)
+      context: ./backend
       dockerfile: Dockerfile
     container_name: cesizen-api
     restart: unless-stopped
@@ -40,12 +38,10 @@ services:
       Jwt__Key: ${JWT_KEY}
     depends_on:
       cesizen-db:
-        condition: service_healthy   # l'API attend que la base soit saine
+        condition: service_healthy
     networks:
       - cesizen-net
-    # Pas de ports publiés : l'API est joignable uniquement via Nginx.
 
-  # --------- Frontend Angular 21 servi par Nginx ---------
   cesizen-web:
     build:
       context: ./frontend/cesi-zen-ui
@@ -53,7 +49,10 @@ services:
     container_name: cesizen-web
     restart: unless-stopped
     ports:
-      - "8080:80"                  # http://localhost:8080  (en prod : 443:443 avec TLS)
+      - "8080:80"
+      - "8443:443"          # [SÉCU 2] HTTPS
+    volumes:
+      - ./certs:/etc/nginx/certs:ro   # [SÉCU 2] certificat TLS monté (non versionné)
     depends_on:
       - cesizen-api
     networks:
