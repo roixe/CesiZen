@@ -2,9 +2,12 @@ name: SonarCloud (lecture seule)
 
 on:
   push:
-    branches: [develop, main]
+    branches:
+      - master
+      - main
+      - develop
   pull_request:
-    branches: [develop, main]
+    types: [opened, synchronize, reopened]
 
 jobs:
   sonarcloud:
