@@ -13,8 +13,8 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_API: ${{ github.repository }}/cesizen-api
-  IMAGE_WEB: ${{ github.repository }}/cesizen-web
+  IMAGE_API: roixe/cesizen/cesizen-api
+  IMAGE_WEB: roixe/cesizen/cesizen-web
 
 jobs:
   tests:
