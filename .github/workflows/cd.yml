@@ -43,10 +43,12 @@ jobs:
 
       - name: Frontend tests
         working-directory: frontend/cesi-zen-ui
+        env:
+          CI: true
         run: |
           npm ci
-          npx ng test --run
-
+          npx ng test --watch false
+          
   migrate-script:
     name: Generate SQL migration script
     needs: tests
@@ -61,8 +63,18 @@ jobs:
       - name: Install dotnet-ef
         run: dotnet tool install --global dotnet-ef
 
+      - name: Restore dependencies
+        working-directory: backend/CesiZen.Api
+        run: dotnet restore CesiZen.Api/CesiZen.Api.csproj
+
       - name: Generate idempotent SQL migration script
         working-directory: backend/CesiZen.Api
+        env:
+          ASPNETCORE_ENVIRONMENT: Build
+          ConnectionStrings__DefaultConnection: "Server=localhost;Database=cesizen;User=ci;Password=ci;"
+          Jwt__Issuer: ci-build
+          Jwt__Audience: ci-build
+          Jwt__Key: ci-build-key-not-used-only-to-pass-validation-32-chars
         run: |
           mkdir -p ../../artifacts
           dotnet ef migrations script --project CesiZen.Infrastructure --startup-project CesiZen.Api --idempotent --output ../../artifacts/migrate-${{ github.sha }}.sql
