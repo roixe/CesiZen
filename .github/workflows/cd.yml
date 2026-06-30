@@ -72,6 +72,9 @@ jobs:
         env:
           ASPNETCORE_ENVIRONMENT: Build
           ConnectionStrings__DefaultConnection: "Server=localhost;Database=cesizen;User=ci;Password=ci;"
+          Jwt__Issuer: ci-build
+          Jwt__Audience: ci-build
+          Jwt__Key: ci-build-key-not-used-only-to-pass-validation-32-chars
         run: |
           mkdir -p ../../artifacts
           dotnet ef migrations script --project CesiZen.Infrastructure --startup-project CesiZen.Api --idempotent --output ../../artifacts/migrate-${{ github.sha }}.sql
