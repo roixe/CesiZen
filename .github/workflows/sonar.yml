@@ -45,7 +45,7 @@ jobs:
 
       - name: Build
         working-directory: backend/CesiZen.Api
-        run: dotnet build CesiZen.Api.sln --configuration Release
+        run: dotnet build CesiZen.Api/CesiZen.Api.csproj --configuration Release
 
       - name: SonarCloud end
         working-directory: backend/CesiZen.Api
