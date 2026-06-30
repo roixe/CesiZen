@@ -63,6 +63,10 @@ jobs:
       - name: Install dotnet-ef
         run: dotnet tool install --global dotnet-ef
 
+      - name: Restore dependencies
+        working-directory: backend/CesiZen.Api
+        run: dotnet restore CesiZen.Api/CesiZen.Api.csproj
+
       - name: Generate idempotent SQL migration script
         working-directory: backend/CesiZen.Api
         run: |
