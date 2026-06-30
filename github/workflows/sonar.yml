@@ -2,7 +2,7 @@ name: SonarCloud (lecture seule)
 
 # Analyse SonarCloud à chaque push sur develop/main et sur chaque PR.
 
-on:
+"on":
   push:
     branches:
       - develop
