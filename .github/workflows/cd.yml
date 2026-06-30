@@ -43,10 +43,12 @@ jobs:
 
       - name: Frontend tests
         working-directory: frontend/cesi-zen-ui
+        env:
+          CI: true
         run: |
           npm ci
-          npx ng test --run
-
+          npx ng test --watch false
+          
   migrate-script:
     name: Generate SQL migration script
     needs: tests
