@@ -19,4 +19,5 @@ export interface RegisterRequest {
   nom: string;
   email: string;
   password: string;
+  consentement: boolean; // [SÉCU 4] consentement RGPD
 }
