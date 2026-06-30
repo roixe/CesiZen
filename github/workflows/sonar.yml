@@ -1,5 +1,4 @@
 name: SonarCloud (lecture seule)
-
 on:
   push:
     branches:
@@ -8,7 +7,6 @@ on:
       - develop
   pull_request:
     types: [opened, synchronize, reopened]
-
 jobs:
   sonarcloud:
     name: SonarCloud analysis
