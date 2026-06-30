@@ -45,7 +45,7 @@ jobs:
         working-directory: frontend/cesi-zen-ui
         run: |
           npm ci
-          npx ng test --watch=false --browsers=ChromeHeadless
+          npx ng test --run
 
   migrate-script:
     name: Generate SQL migration script
