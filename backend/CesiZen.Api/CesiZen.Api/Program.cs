@@ -1,4 +1,4 @@
-using CesiZen.Infrastructure.Data;
+﻿using CesiZen.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -140,9 +140,10 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// Applique automatiquement les migrations (schéma + seed + nouvelles colonnes) au démarrage.
-using (var scope = app.Services.CreateScope())
+var autoMigrate = builder.Configuration.GetValue<bool>("DB_AUTO_MIGRATE");
+if (autoMigrate)
 {
+    using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<CesiZenDbContext>();
     db.Database.Migrate();
 }
