@@ -69,6 +69,9 @@ jobs:
 
       - name: Generate idempotent SQL migration script
         working-directory: backend/CesiZen.Api
+        env:
+          ASPNETCORE_ENVIRONMENT: Build
+          ConnectionStrings__DefaultConnection: "Server=localhost;Database=cesizen;User=ci;Password=ci;"
         run: |
           mkdir -p ../../artifacts
           dotnet ef migrations script --project CesiZen.Infrastructure --startup-project CesiZen.Api --idempotent --output ../../artifacts/migrate-${{ github.sha }}.sql
