@@ -1,0 +1,66 @@
+# docker-compose.recette.yml
+# Environnement de recette — utilise les images GHCR taggées :develop
+# Démarrage : docker compose --env-file .env.recette -f docker-compose.recette.yml up -d
+#   HTTP  : http://localhost:8080
+#   HTTPS : https://localhost:8443
+
+services:
+  cesizen-db:
+    image: mysql:8.0
+    container_name: cesizen-recette-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - cesizen-recette-data:/var/lib/mysql
+    networks:
+      - cesizen-recette-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${DB_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  cesizen-api:
+    image: ghcr.io/roixe/cesizen/cesizen-api:develop
+    container_name: cesizen-recette-api
+    restart: unless-stopped
+    pull_policy: always
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+      DB_AUTO_MIGRATE: ${DB_AUTO_MIGRATE}
+      ASPNETCORE_URLS: "http://+:8080"
+      ConnectionStrings__DefaultConnection: "Server=cesizen-recette-db;Port=3306;Database=${DB_NAME};User Id=${DB_USER};Password=${DB_PASSWORD};"
+      Jwt__Issuer: ${JWT_ISSUER}
+      Jwt__Audience: ${JWT_AUDIENCE}
+      Jwt__Key: ${JWT_KEY}
+    depends_on:
+      cesizen-db:
+        condition: service_healthy
+    networks:
+      - cesizen-recette-net
+
+  cesizen-web:
+    image: ghcr.io/roixe/cesizen/cesizen-web:develop
+    container_name: cesizen-recette-web
+    restart: unless-stopped
+    pull_policy: always
+    ports:
+      - "8080:80"
+      - "8443:443"
+    volumes:
+      - ./certs:/etc/nginx/certs:ro
+    depends_on:
+      - cesizen-api
+    networks:
+      - cesizen-recette-net
+
+volumes:
+  cesizen-recette-data:
+
+networks:
+  cesizen-recette-net:
+    driver: bridge

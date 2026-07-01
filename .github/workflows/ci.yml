@@ -16,9 +16,9 @@ env:
   IMAGE_WEB: roixe/cesizen/cesizen-web
 
 jobs:
-  # -------------------------------------------------------------------
-  # 1. Tests backend (sur toutes les PR et pushes)
-  # -------------------------------------------------------------------
+  # -----------------------------------------------------------------
+  # 1. Tests backend
+  # -----------------------------------------------------------------
   backend-tests:
     name: Backend - Build & Test
     runs-on: ubuntu-latest
@@ -43,9 +43,9 @@ jobs:
       - name: Run backend tests
         run: dotnet test CESIZen.Api.Tests/CesiZen.Api.Tests.csproj --no-build --configuration Release --verbosity normal
 
-  # -------------------------------------------------------------------
-  # 2. Tests frontend (sur toutes les PR et pushes)
-  # -------------------------------------------------------------------
+  # -----------------------------------------------------------------
+  # 2. Tests frontend
+  # -----------------------------------------------------------------
   frontend-tests:
     name: Frontend - Install & Test
     runs-on: ubuntu-latest
@@ -71,9 +71,9 @@ jobs:
           CI: true
         run: npx ng test --watch false
 
-  # -------------------------------------------------------------------
-  # 3. Génération du script SQL (uniquement sur merge main)
-  # -------------------------------------------------------------------
+  # -----------------------------------------------------------------
+  # 3. Génération du script SQL (uniquement main)
+  # -----------------------------------------------------------------
   migrate-script:
     name: Generate SQL migration script
     needs: [backend-tests, frontend-tests]
@@ -106,9 +106,9 @@ jobs:
           path: artifacts/migrate-*.sql
           retention-days: 90
 
-  # -------------------------------------------------------------------
-  # 4. Build & push des images (sur merge develop OU main)
-  # -------------------------------------------------------------------
+  # -----------------------------------------------------------------
+  # 4. Build & push des images (develop OU main)
+  # -----------------------------------------------------------------
   build-and-push:
     name: Build & push Docker images
     needs: [backend-tests, frontend-tests]
@@ -130,9 +130,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Sur main : tags "latest" + <sha>
-      # Sur develop : tags "develop" + <sha>
-      - name: Compute tags
+      - name: Compute tag
         id: tags
         run: |
           if [ "${{ github.ref }}" = "refs/heads/main" ]; then
@@ -159,54 +157,75 @@ jobs:
             ${{ env.REGISTRY }}/${{ env.IMAGE_WEB }}:${{ steps.tags.outputs.env_tag }}
             ${{ env.REGISTRY }}/${{ env.IMAGE_WEB }}:${{ github.sha }}
 
-  # -------------------------------------------------------------------
-  # 5. Déploiement production (uniquement main)
-  # -------------------------------------------------------------------
-  deploy-prod:
-    name: Deploy to production
-    needs: [build-and-push, migrate-script]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    environment: production
-    steps:
-      - name: Deploy on target server (SSH)
-        run: |
-          echo "Deploiement effectif en production."
-          echo "Image : ${{ env.REGISTRY }}/${{ env.IMAGE_API }}:latest"
-          echo ""
-          echo "Configuration attendue (secrets a definir) :"
-          echo "  - DEPLOY_HOST     : IP ou hostname du serveur"
-          echo "  - DEPLOY_USER     : utilisateur SSH"
-          echo "  - DEPLOY_SSH_KEY  : cle privee SSH"
-
-      # A activer quand le serveur cible sera disponible :
-      # - uses: appleboy/ssh-action@v1
-      #   with:
-      #     host: ${{ secrets.DEPLOY_HOST }}
-      #     username: ${{ secrets.DEPLOY_USER }}
-      #     key: ${{ secrets.DEPLOY_SSH_KEY }}
-      #     script: |
-      #       cd /srv/cesizen
-      #       docker compose pull
-      #       docker compose up -d
-      #       curl -f http://localhost:8080/api/health
-
-  # -------------------------------------------------------------------
-  # 6. Déploiement environnement de recette (uniquement develop)
-  # -------------------------------------------------------------------
+  # -----------------------------------------------------------------
+  # 5. Déploiement recette (develop) — sur le runner local
+  # -----------------------------------------------------------------
   deploy-recette:
-    name: Deploy to recette
+    name: Deploy to recette (local)
     needs: [build-and-push]
     if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
-    runs-on: ubuntu-latest
-    environment: recette
+    runs-on: [self-hosted, cesizen]
     steps:
-      - name: Deploy on recette server (SSH)
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Copy env file                    # ← ICI, nouvelle étape
+        shell: powershell
+        run: copy C:\cesizen-config\.env.recette .env.recette
+
+      - name: Deploy recette stack             # ← après
+        shell: powershell
         run: |
-          echo "Deploiement en environnement de recette."
-          echo "Image : ${{ env.REGISTRY }}/${{ env.IMAGE_API }}:develop"
-          echo ""
-          echo "Configuration attendue (secrets a definir) :"
-          echo "  - RECETTE_HOST     : IP ou hostname du serveur de recette"
-          echo "  - RECETTE_USER     : utilisateur SSH"
-          echo "  - RECETTE_SSH_KEY  : cle privee SSH"
+          Write-Host "Deploiement en environnement de recette (image :develop)"
+          docker compose --env-file .env.recette -f docker-compose.recette.yml pull
+          docker compose --env-file .env.recette -f docker-compose.recette.yml up -d
+          Start-Sleep -Seconds 10
+          docker compose --env-file .env.recette -f docker-compose.recette.yml ps
+
+      - name: Summary
+        shell: powershell
+        run: |
+          Write-Host ""
+          Write-Host "=================================================="
+          Write-Host "Environnement de RECETTE deploye"
+          Write-Host "  http://localhost:8080"
+          Write-Host "  https://localhost:8443"
+          Write-Host "=================================================="
+
+  # -----------------------------------------------------------------
+  # 6. Déploiement production (main) — sur le runner local
+  # -----------------------------------------------------------------
+    # -----------------------------------------------------------------
+  # 6. Déploiement production (main) — sur le runner local
+  # -----------------------------------------------------------------
+  deploy-prod:
+    name: Deploy to production (local)
+    needs: [build-and-push, migrate-script]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, cesizen]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Copy env file
+        shell: powershell
+        run: copy C:\cesizen-config\.env.prod .env.prod
+
+      - name: Deploy prod stack
+        shell: powershell
+        run: |
+          Write-Host "Deploiement en environnement de production (image :latest)"
+          docker compose --env-file .env.prod -f docker-compose.prod.yml pull
+          docker compose --env-file .env.prod -f docker-compose.prod.yml up -d
+          Start-Sleep -Seconds 10
+          docker compose --env-file .env.prod -f docker-compose.prod.yml ps
+
+      - name: Summary
+        shell: powershell
+        run: |
+          Write-Host ""
+          Write-Host "=================================================="
+          Write-Host "Environnement de PRODUCTION deploye"
+          Write-Host "  http://localhost:9090"
+          Write-Host "  https://localhost:9443"
+          Write-Host "=================================================="
