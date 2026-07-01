@@ -100,7 +100,7 @@ jobs:
           dotnet ef migrations script --project CesiZen.Infrastructure --startup-project CesiZen.Api --idempotent --output ../../artifacts/migrate-${{ github.sha }}.sql
 
       - name: Upload migration script
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: db-migration-script
           path: artifacts/migrate-*.sql
