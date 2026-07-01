@@ -170,11 +170,11 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Copy env file                    # ← ICI, nouvelle étape
-        shell: pwsh
+        shell: powershell
         run: copy C:\cesizen-config\.env.recette .env.recette
 
       - name: Deploy recette stack             # ← après
-        shell: pwsh
+        shell: powershell
         run: |
           Write-Host "Deploiement en environnement de recette (image :develop)"
           docker compose --env-file .env.recette -f docker-compose.recette.yml pull
@@ -183,7 +183,7 @@ jobs:
           docker compose --env-file .env.recette -f docker-compose.recette.yml ps
 
       - name: Summary
-        shell: pwsh
+        shell: powershell
         run: |
           Write-Host ""
           Write-Host "=================================================="
@@ -208,11 +208,11 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Copy env file
-        shell: pwsh
+        shell: powershell
         run: copy C:\cesizen-config\.env.prod .env.prod
 
       - name: Deploy prod stack
-        shell: pwsh
+        shell: powershell
         run: |
           Write-Host "Deploiement en environnement de production (image :latest)"
           docker compose --env-file .env.prod -f docker-compose.prod.yml pull
@@ -221,7 +221,7 @@ jobs:
           docker compose --env-file .env.prod -f docker-compose.prod.yml ps
 
       - name: Summary
-        shell: pwsh
+        shell: powershell
         run: |
           Write-Host ""
           Write-Host "=================================================="
