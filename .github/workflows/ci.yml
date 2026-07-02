@@ -169,11 +169,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Copy env file                    # ← ICI, nouvelle étape
+      - name: Copy env file                    
         shell: powershell
         run: copy C:\cesizen-config\.env.recette .env.recette
 
-      - name: Deploy recette stack             # ← après
+      - name: Copy certs
+        shell: powershell
+        run: |
+          if (-not (Test-Path certs)) { New-Item -ItemType Directory -Path certs | Out-Null }
+          Copy-Item C:\cesizen-config\certs\* certs\
+          
+      - name: Deploy recette stack
         shell: powershell
         run: |
           Write-Host "Deploiement en environnement de recette (image :develop)"
@@ -192,9 +198,7 @@ jobs:
           Write-Host "  https://localhost:8443"
           Write-Host "=================================================="
 
-  # -----------------------------------------------------------------
-  # 6. Déploiement production (main) — sur le runner local
-  # -----------------------------------------------------------------
+
     # -----------------------------------------------------------------
   # 6. Déploiement production (main) — sur le runner local
   # -----------------------------------------------------------------
@@ -210,7 +214,13 @@ jobs:
       - name: Copy env file
         shell: powershell
         run: copy C:\cesizen-config\.env.prod .env.prod
-
+        
+      - name: Copy certs
+        shell: powershell
+        run: |
+          if (-not (Test-Path certs)) { New-Item -ItemType Directory -Path certs | Out-Null }
+          Copy-Item C:\cesizen-config\certs\* certs\
+    
       - name: Deploy prod stack
         shell: powershell
         run: |
