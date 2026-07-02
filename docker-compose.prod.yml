@@ -4,6 +4,8 @@
 #   HTTP  : http://localhost:9090
 #   HTTPS : https://localhost:9443
 
+name: cesizen-prod
+
 services:
   cesizen-db:
     image: mysql:8.0
