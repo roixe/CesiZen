@@ -3,6 +3,7 @@
 # Démarrage : docker compose --env-file .env.recette -f docker-compose.recette.yml up -d
 #   HTTP  : http://localhost:8080
 #   HTTPS : https://localhost:8443
+name: cesizen-recette
 
 services:
   cesizen-db:
